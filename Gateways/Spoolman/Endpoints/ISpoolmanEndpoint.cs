@@ -17,9 +17,11 @@ public interface IFilamentEndpoint
 
 public interface ISpoolEndpoint
 {
-    Task<Spool> GetOrCreateSpool(string brand, string material, string color, string tagUid);
+    Task<Spool> GetOrCreateSpool(string vendorName, string material, string color, string activeTrayId, string tagUid);
 
     Task<bool> UseSpoolWeight(int spoolId, float usedWeight);
+
+    Task<bool> SetActiveTray(int spoolId, string activeTrayId);
 }
 
 public interface IFieldEndpoint
