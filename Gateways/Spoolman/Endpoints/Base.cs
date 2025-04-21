@@ -28,11 +28,24 @@ internal abstract class SpoolmanEndpoint<TSpoolmanEntity> : ISpoolmanEndpoint<TS
     public async Task<List<TSpoolmanEntity>?> GetAllAsync(string query = "", bool useQueryParams = true) =>
         await HttpClient.GetFromJsonAsync<List<TSpoolmanEntity>>($"{Endpoint}{(useQueryParams ? "?" : string.Empty)}{query}", JsonOptions);
 
+    public async Task<TSpoolmanEntity?> GetByIdAsync(string id)
+    {
+        var response = await HttpClient.GetAsync($"{Endpoint}/{id}");
+
+        return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<TSpoolmanEntity>(JsonOptions) : null;
+    }
+
     public async Task<TSpoolmanEntity?> PostAsync(TSpoolmanEntity newEntity)
     {
         var json = JsonSerializer.Serialize(newEntity, JsonOptions);
         var createVendorResponse = await HttpClient.PostAsJsonAsync(Endpoint, newEntity, JsonOptions);
 
         return createVendorResponse.IsSuccessStatusCode ? await createVendorResponse.Content.ReadFromJsonAsync<TSpoolmanEntity>() : null;
+    }
+
+    public async Task<bool> UpdateAsync(int id, object patch)
+    {
+        var updateVendorResponse = await HttpClient.PatchAsJsonAsync($"{Endpoint}/{id}", patch, JsonOptions);
+        return updateVendorResponse.IsSuccessStatusCode;
     }
 }

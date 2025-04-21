@@ -7,6 +7,13 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# This stage is used to build the Angular app
+FROM node:18-slim AS angular-build
+WORKDIR /src
+COPY Application/wwwroot/spoolman-updater/ ./
+RUN npm install
+# Copy the rest of the Angular app source code
+RUN npm run build -- --configuration production
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -29,4 +36,5 @@ RUN dotnet publish "./Application.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=angular-build /src/dist/spoolman-updater/. ./wwwroot
 ENTRYPOINT ["dotnet", "Application.dll"]

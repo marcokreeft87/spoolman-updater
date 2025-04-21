@@ -1,6 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using LinqKit;
+using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace Gateways;
 
@@ -22,40 +22,72 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 
     protected override string Endpoint => "spool";
 
-    public async Task<Spool> GetOrCreateSpool(string vendorName, string material, string color, string tagUid)
+    public async Task<List<Spool>> GetAllAsync() => await GetAllAsync(string.Empty, false);
+
+    public async Task<List<Spool>> GetCurrentSpoolsInTray(string trayId)
     {
-        if (Spool.IsEmptyTag(tagUid))
-            vendorName = GetMappedBrandName(vendorName);
+        var jsonEncoded = JsonSerializer.Serialize(trayId, JsonOptions);
 
-        var query = $"{FilamentQueryConstants.FilamentVendorName}={vendorName}";
+        var allSpools = await GetAllAsync(string.Empty, false);
 
-        if (!string.IsNullOrEmpty(material))
+        return allSpools?.Where(spool => spool.Extra.ContainsKey("active_tray") && spool.Extra["active_tray"] == jsonEncoded).ToList() ?? new List<Spool>();
+    }
+
+    public async Task<Spool> GetOrCreateSpool(string vendorName, string material, string color, string activeTrayId, string tagUid)
+    {
+        var predicate = PredicateBuilder.New<Spool>(true);
+
+        if (!string.IsNullOrEmpty(activeTrayId))
         {
-            query += $"&{FilamentQueryConstants.FilamentMaterial}={material}";
-        }
+            var jsonEncoded = JsonSerializer.Serialize(activeTrayId, JsonOptions);
 
-        var allBrandSpools = await GetAllAsync(query);
-
-        Spool? matchingSpool = null;
-        if (allBrandSpools != null && allBrandSpools.Any())
+            predicate = predicate.And(spool => spool.Extra.ContainsKey("active_tray") && spool.Extra["active_tray"] == jsonEncoded);
+        }        
+        else if (!string.IsNullOrEmpty(tagUid))
         {
-            var colorMatchingSpools = allBrandSpools.Where(spool => color.StartsWith($"#{spool.Filament.ColorHex}", StringComparison.OrdinalIgnoreCase) == true);
-
-            if (!Spool.IsEmptyTag(tagUid))
-            {
-                var jsonEncoded = JsonSerializer.Serialize(tagUid, JsonOptions);
-
-                matchingSpool = colorMatchingSpools.FirstOrDefault(spool => spool.Extra.ContainsKey("tag") && spool.Extra["tag"] == jsonEncoded);
-            }
-            else
-            {
-                matchingSpool = colorMatchingSpools.FirstOrDefault();
-            }
+            var jsonEncoded = JsonSerializer.Serialize(tagUid, JsonOptions);
+            predicate = predicate.And(spool => spool.Extra.ContainsKey("tag") && spool.Extra["tag"] == jsonEncoded);
         }
+        else 
+        {
+            if (!string.IsNullOrEmpty(material))
+            {
+                predicate = predicate.And(spool => spool.Filament.Material == material);
+            }
 
-        matchingSpool ??= await CreateSpoolAsync(vendorName, color.Substring(1, 6), material, tagUid);
+            if (!string.IsNullOrEmpty(color))
+            {
+                predicate = predicate.And(spool => color.StartsWith($"#{spool.Filament.ColorHex}", StringComparison.OrdinalIgnoreCase) == true);
+            }
+        }        
+
+        var allBrandSpools = await GetAllAsync(string.Empty, false);
+
+        Spool? matchingSpool = allBrandSpools?.FirstOrDefault(predicate);
+
+        matchingSpool ??= await CreateSpoolAsync(vendorName, color.Substring(1, 6), material, activeTrayId, tagUid);
 
         return matchingSpool;
+    }
+
+    public async Task<bool> SetActiveTray(int spoolId, string activeTrayId)
+    {
+        var spool = await GetByIdAsync(spoolId.ToString());
+        if (spool == null)
+            throw new InvalidOperationException($"Spool with ID {spoolId} not found.");
+
+        var extra = new Dictionary<string, string>();
+        extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
+
+        spool.Extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
+
+        return await UpdateAsync(spool.Id.Value, new
+        {
+            extra = new
+            {
+                active_tray = JsonSerializer.Serialize(activeTrayId, JsonOptions)
+            }
+        });
     }
 
     public async Task<bool> UseSpoolWeight(int spoolId, float usedWeight)
@@ -66,11 +98,23 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
         return response.IsSuccessStatusCode;
     }
 
-    private async Task<Spool?> CreateSpoolAsync(string vendorName, string color, string material, string tagUid)
+    private async Task<Spool?> CreateSpoolAsync(string vendorName, string color, string material, string activeTrayId, string tagUid)
     {
         var vendor = await vendorEndpoint.GetOrCreate(vendorName);
 
         var filament = await filamentEndpoint.GetOrCreate(vendor, color, material);
+
+        var extra = new Dictionary<string, string>();
+
+        if (!Spool.IsEmptyTag(tagUid))
+        {
+            extra["tag"] = JsonSerializer.Serialize(tagUid, JsonOptions);
+        }
+
+        if (!string.IsNullOrEmpty(activeTrayId))
+        {
+            extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
+        }
 
         var newSpool = new Spool
         {
@@ -78,22 +122,10 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
             InitialWeight = 1000,  // Default values, adjust as needed
             RemainingWeight = 1000,
             SpoolWeight = 250,
-            Extra = !Spool.IsEmptyTag(tagUid) ? new Dictionary<string, string>
-            {
-                { "tag", JsonSerializer.Serialize(tagUid, JsonOptions) }
-            } : new()
+            Extra = extra
         };
 
         return await PostAsync(newSpool);
     }
 
-    private string GetMappedBrandName(string vendorName)
-    {
-        foreach (var mapping in configuration.VendorMappings.Where(mapping => Regex.IsMatch(vendorName, mapping.Pattern)))
-        {
-            return mapping.NewVendorName;
-        }
-
-        return vendorName;
-    }
 }

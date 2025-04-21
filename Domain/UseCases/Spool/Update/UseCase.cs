@@ -6,7 +6,7 @@ internal sealed class UpdateSpoolUseCase(SpoolmanClient spoolmanClient) : IUseCa
 {
     public async Task<IOutput> ExecuteAsync(UpdateSpoolInput input)
     {
-        var spool = await spoolmanClient.GetSpoolByBrandAndColorAsync(input.Name, input.Material, input.Color, input.TagUid);
+        var spool = await spoolmanClient.GetSpoolByBrandAndColorAsync(input.Name, input.Material, input.Color, input.ActiveTrayId, input.TagUid);
         if (spool == null)
             return new UpdateSpoolOutput(false);
 

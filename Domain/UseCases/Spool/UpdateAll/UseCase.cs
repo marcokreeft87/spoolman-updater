@@ -15,11 +15,8 @@ internal sealed class UpdateAllSpoolsUseCase(HomeAssistantClient homeAssistantCl
                 continue;
 
             string trayName = trayInfo.Name ?? "Unknown"; // Handle null values
-            //string[] parts = trayName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            //string brand = parts.Length > 0 ? parts[0] : "Unknown";
-
-            var spool = await spoolmanClient.GetSpoolByBrandAndColorAsync(trayName, trayInfo.Type, trayInfo.Color, trayInfo.TagUid);
+            var spool = await spoolmanClient.GetSpoolByBrandAndColorAsync(trayName, trayInfo.Type, trayInfo.Color, "", trayInfo.TagUid);
 
             spools.Add(spool);
         }

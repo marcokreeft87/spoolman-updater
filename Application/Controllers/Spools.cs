@@ -7,11 +7,15 @@ namespace Application.Controllers;
 [Route("[controller]")]
 public class SpoolsController(IInputHandler handler) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> UpdateAll() =>
-        Ok(await handler.HandleAsync(new UpdateAllSpoolsInput()));
-
     [HttpPost]
     public async Task<IActionResult> Update([FromBody] UpdateSpoolInput input) =>
+        Ok(await handler.HandleAsync(input));
+
+    [HttpPost("tray")]
+    public async Task<IActionResult> UpdateTray([FromBody] UpdateTrayInput input) =>
+        Ok(await handler.HandleAsync(input));
+
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] GetAllSpoolsInput input) =>
         Ok(await handler.HandleAsync(input));
 }

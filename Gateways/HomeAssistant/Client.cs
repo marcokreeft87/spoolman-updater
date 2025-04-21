@@ -25,7 +25,11 @@ public class HomeAssistantClient
 
         var response = await _httpClient.GetFromJsonAsync<HomeAssistantState>($"{_baseUrl}/api/states/{sensorEntity}");
 
-        return response?.Attributes;
+        var trayInfo = response?.Attributes;
+        
+        trayInfo.Id = sensorEntity.Replace("sensor.", string.Empty);
+
+        return trayInfo;
     }
 
     public async Task<List<TrayInfo?>> GetAllTrayInfoAsync()
