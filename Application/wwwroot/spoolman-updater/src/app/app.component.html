@@ -3,16 +3,22 @@
 <div class="tray-container">
   @for (tray of trays; track tray; let index = $index) {
   <mat-card class="tray-card">
+    <mat-card-header>
+      <mat-card-title>Tray {{ index + 1 }}</mat-card-title>
+    </mat-card-header>
     <mat-card-content class="trays">
       <div class="tray" [style]="{ 'background-color': tray.color }">
-        <h3>Tray {{ index + 1 }}</h3>
 
         <ng-container *ngIf="getCurrentSpool(tray) as currentSpool">
+          
+          <span>{{ currentSpool.filament.vendor.name }}</span>
+          <span>{{ currentSpool.filament.material }}</span>
+          <span>{{ currentSpool.filament.name }}</span>
+          
           <div
             class="spool-color"
             [style.background-color]="'#' + currentSpool.filament.color_hex"
-          ></div>
-          <span>{{ displaySpoolName(currentSpool) }}</span>
+          >#{{ currentSpool.filament.color_hex }}</div>
 
           <span>Remaining: {{ currentSpool.remaining_weight }}g</span>
         </ng-container>
@@ -31,9 +37,12 @@
           </mat-select>
         </mat-form-field>
 
-        <button mat-raised-button color="warning" (click)="updateTray(tray)">Select</button>
+       
       </div>
     </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="updateTray(tray)">Select</button>
+    </mat-card-actions>
   </mat-card>
   }
 </div>

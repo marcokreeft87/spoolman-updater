@@ -7,19 +7,24 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-FROM node:18-slim AS angular-build
+# This stage is used to build the Angular app
+FROM node:20-slim AS angular-build
 WORKDIR /src
-# Copy the Angular workspace files (including angular.json, package.json, etc.)
+
+# Copy package.json and package-lock.json first to leverage Docker caching
 COPY Application/wwwroot/spoolman-updater/package*.json ./wwwroot/spoolman-updater/
 COPY Application/wwwroot/spoolman-updater/angular.json ./wwwroot/spoolman-updater/
 COPY Application/wwwroot/spoolman-updater/tsconfig*.json ./wwwroot/spoolman-updater/
 COPY Application/wwwroot/spoolman-updater/src ./wwwroot/spoolman-updater/src
 
-# Install dependencies and build the Angular app
+# Install dependencies
 WORKDIR /src/wwwroot/spoolman-updater
 RUN npm install
-RUN npm run build -- --configuration production
+
+# Build the Angular app
+#RUN npm run build -- --configuration production
+RUN npm run build:prod
+
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
