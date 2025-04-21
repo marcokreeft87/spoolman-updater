@@ -7,12 +7,18 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-# This stage is used to build the Angular app
+
 FROM node:18-slim AS angular-build
 WORKDIR /src
-COPY Application/wwwroot/spoolman-updater/ ./
+# Copy the Angular workspace files (including angular.json, package.json, etc.)
+COPY Application/wwwroot/spoolman-updater/package*.json ./wwwroot/spoolman-updater/
+COPY Application/wwwroot/spoolman-updater/angular.json ./wwwroot/spoolman-updater/
+COPY Application/wwwroot/spoolman-updater/tsconfig*.json ./wwwroot/spoolman-updater/
+COPY Application/wwwroot/spoolman-updater/src ./wwwroot/spoolman-updater/src
+
+# Install dependencies and build the Angular app
+WORKDIR /src/wwwroot/spoolman-updater
 RUN npm install
-# Copy the rest of the Angular app source code
 RUN npm run build -- --configuration production
 
 # This stage is used to build the service project
@@ -36,5 +42,5 @@ RUN dotnet publish "./Application.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY --from=angular-build /src/dist/spoolman-updater/. ./wwwroot
+COPY --from=angular-build /src/wwwroot/spoolman-updater/dist/spoolman-updater ./wwwroot
 ENTRYPOINT ["dotnet", "Application.dll"]
