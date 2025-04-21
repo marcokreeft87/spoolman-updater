@@ -1,7 +1,6 @@
 ﻿using LinqKit;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace Gateways;
 
@@ -23,6 +22,17 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 
     protected override string Endpoint => "spool";
 
+    public async Task<List<Spool>> GetAllAsync() => await GetAllAsync(string.Empty, false);
+
+    public async Task<List<Spool>> GetCurrentSpoolsInTray(string trayId)
+    {
+        var jsonEncoded = JsonSerializer.Serialize(trayId, JsonOptions);
+
+        var allSpools = await GetAllAsync(string.Empty, false);
+
+        return allSpools?.Where(spool => spool.Extra.ContainsKey("active_tray") && spool.Extra["active_tray"] == jsonEncoded).ToList() ?? new List<Spool>();
+    }
+
     public async Task<Spool> GetOrCreateSpool(string vendorName, string material, string color, string activeTrayId, string tagUid)
     {
         var predicate = PredicateBuilder.New<Spool>(true);
@@ -32,13 +42,13 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
             var jsonEncoded = JsonSerializer.Serialize(activeTrayId, JsonOptions);
 
             predicate = predicate.And(spool => spool.Extra.ContainsKey("active_tray") && spool.Extra["active_tray"] == jsonEncoded);
-        }
+        }        
         else if (!string.IsNullOrEmpty(tagUid))
         {
             var jsonEncoded = JsonSerializer.Serialize(tagUid, JsonOptions);
             predicate = predicate.And(spool => spool.Extra.ContainsKey("tag") && spool.Extra["tag"] == jsonEncoded);
         }
-        else
+        else 
         {
             if (!string.IsNullOrEmpty(material))
             {
@@ -49,7 +59,7 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
             {
                 predicate = predicate.And(spool => color.StartsWith($"#{spool.Filament.ColorHex}", StringComparison.OrdinalIgnoreCase) == true);
             }
-        }
+        }        
 
         var allBrandSpools = await GetAllAsync(string.Empty, false);
 
@@ -69,7 +79,15 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
         var extra = new Dictionary<string, string>();
         extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
 
-        return await UpdateAsync(spool.Id.Value, JsonSerializer.Serialize(extra, JsonOptions));
+        spool.Extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
+
+        return await UpdateAsync(spool.Id.Value, new
+        {
+            extra = new
+            {
+                active_tray = JsonSerializer.Serialize(activeTrayId, JsonOptions)
+            }
+        });
     }
 
     public async Task<bool> UseSpoolWeight(int spoolId, float usedWeight)
@@ -93,7 +111,7 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
             extra["tag"] = JsonSerializer.Serialize(tagUid, JsonOptions);
         }
 
-        if (activeTrayId != null)
+        if (!string.IsNullOrEmpty(activeTrayId))
         {
             extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
         }

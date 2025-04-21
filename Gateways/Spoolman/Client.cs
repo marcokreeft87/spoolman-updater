@@ -3,6 +3,8 @@ namespace Gateways;
 
 public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spoolEndpoint, IFieldEndpoint fieldEndpoint)
 {
+    public async Task<List<Spool>> GetAllAsync() => await spoolEndpoint.GetAllAsync();
+
     public async Task<bool> UseSpoolWeightAsync(int spoolId, float usedWeight) =>
         await spoolEndpoint.UseSpoolWeight(spoolId, usedWeight);
 
@@ -11,6 +13,9 @@ public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spool
 
     public async Task<bool> SetActiveTray(int spoolId, string activeTrayId) =>
         await spoolEndpoint.SetActiveTray(spoolId, activeTrayId);
+
+    public async Task<List<Spool>> GetCurrentSpoolsInTray(string trayId) =>
+        await spoolEndpoint.GetCurrentSpoolsInTray(trayId);
 
     public async Task<bool> CheckHealthAsync() =>
         await healthEndpoint.CheckHealthAsync();

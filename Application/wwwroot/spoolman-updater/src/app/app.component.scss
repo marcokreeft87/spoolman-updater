@@ -1,0 +1,17 @@
+.trays {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    .tray {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        
+        .spool-color {
+            height: 20px;
+        }
+    }
+}

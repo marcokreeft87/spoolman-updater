@@ -14,4 +14,8 @@ public class SpoolsController(IInputHandler handler) : ControllerBase
     [HttpPost("tray")]
     public async Task<IActionResult> UpdateTray([FromBody] UpdateTrayInput input) =>
         Ok(await handler.HandleAsync(input));
+
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] GetAllSpoolsInput input) =>
+        Ok(await handler.HandleAsync(input));
 }

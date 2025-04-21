@@ -43,9 +43,9 @@ internal abstract class SpoolmanEndpoint<TSpoolmanEntity> : ISpoolmanEndpoint<TS
         return createVendorResponse.IsSuccessStatusCode ? await createVendorResponse.Content.ReadFromJsonAsync<TSpoolmanEntity>() : null;
     }
 
-    public async Task<bool> UpdateAsync(int id, string patchJson)
+    public async Task<bool> UpdateAsync(int id, object patch)
     {
-        var updateVendorResponse = await HttpClient.PatchAsJsonAsync($"{Endpoint}/{id}", patchJson);
+        var updateVendorResponse = await HttpClient.PatchAsJsonAsync($"{Endpoint}/{id}", patch, JsonOptions);
         return updateVendorResponse.IsSuccessStatusCode;
     }
 }
