@@ -34,7 +34,8 @@ Updates the spool details based on filament usage.
   "material": "PLA",
   "tagUid": "0000000000000000",
   "usedWeight": 10,
-  "color": "#FFFFFFFF"
+  "color": "#FFFFFFFF",
+  "activeTrayId": "tray1"
 }
 ```
 
@@ -109,7 +110,8 @@ rest_command:
         "material": "{{ material }}",
         "tag_uid": "{{ tag_uid }}",
         "used_weight": {{ used_weight }},
-        "color": "{{ color }}"
+        "color": "{{ color }}",
+        "active_tray_id": "{{ filament_active_tray_id }}"
       }
 ```
 
@@ -117,37 +119,58 @@ rest_command:
 The following automation updates the spool when a print finishes or when the AMS tray switches:
 
 ```yaml
-alias: Update Spool When Print Finishes or Tray Switches
-trigger:
-  - platform: state
-    entity_id: sensor.x1c_print_status
-    to: "idle"
-  - platform: state
-    entity_id: sensor.x1c_active_tray_index
-condition:
+alias: Bambulab - Update Spool When Print Finishes or Tray Switches
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - sensor.x1c_active_tray_index
+conditions:
   - condition: template
-    value_template: "{{ states('sensor.x1c_active_tray_index') | int > 0 }}"
-action:
+    value_template: "{{ trigger.from_state.state not in ['unknown', 'unavailable'] }}"
+  - condition: template
+    value_template: "{{ trigger.from_state.state | int > 0 }}"
+actions:
   - variables:
-      tray_number: "{{ trigger.to_state.state if trigger.entity_id == 'sensor.x1c_active_tray_index' else states('sensor.x1c_active_tray_index') }}"
-      tray_sensor: "sensor.x1c_ams_tray_{{ tray_number }}"
-      tray_weight: "{{ state_attr('sensor.x1c_print_weight', 'AMS 1 Tray ' ~ tray_number) | float(0) }}"
+      tray_number: >-
+        {{ trigger.from_state.state if trigger.entity_id ==
+        'sensor.x1c_active_tray_index' else
+        states('sensor.x1c_active_tray_index') }}
+      tray_sensor: sensor.x1c_00m09c422100420_ams_1_tray_{{ tray_number }}
+      tray_weight: >-
+        {{ states('sensor.bambulab_filament_usage_meter') | float(0) | round(2)
+        }}
       tag_uid: "{{ state_attr(tray_sensor, 'tag_uid') }}"
       material: "{{ state_attr(tray_sensor, 'type') }}"
       name: "{{ state_attr(tray_sensor, 'name') }}"
       color: "{{ state_attr(tray_sensor, 'color') }}"
-  - service: rest_command.update_spool
+  - data:
+      filament_name: "{{ name }}"
+      filament_material: "{{ material }}"
+      filament_tag_uid: "{{ tag_uid }}"
+      filament_used_weight: "{{ tray_weight }}"
+      filament_color: "{{ color }}"
+      filament_active_tray_id: "{{ tray_sensor | replace('sensor.x1c_', '') }}"
+    action: rest_command.update_spool
+  - action: utility_meter.calibrate
     data:
-      name: "{{ name }}"
-      material: "{{ material }}"
-      tag_uid: "{{ tag_uid }}"
-      used_weight: "{{ tray_weight }}"
-      color: "{{ color }}"
+      value: "0"
+    target:
+      entity_id: sensor.bambulab_filament_usage_meter
+
 ```
 
 This automation ensures that the filament usage is automatically updated in Spoolman when a print is completed or the AMS tray is changed.
 
 ---
+
+### Setting the active tray in the UI when switching spools
+When you switch your spool in the AMS, you will need to tell spoolman which tray the new spool is in. You can do this in the UI of Spoolman updater.
+Just go to the base of the URL of the API. So for example if your API url is http://192.168.2.186:8088/spools you go to http://192.168.2.186:8088/
+
+![alt text](image.png)
+
+Here you can set which spool is in which tray. 
 
 ## Contributing
 
