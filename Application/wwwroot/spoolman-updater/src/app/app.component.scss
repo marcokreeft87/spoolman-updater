@@ -1,18 +1,32 @@
-.trays {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+.tray-container {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 16px; 
+  justify-content: flex-start; 
 
-    .tray {
+  .tray-card {
+    flex: 1 1 calc(33.333% - 16px); 
+    box-sizing: border-box; 
+    min-width: 250px; 
+    max-width: 400px; 
+
+    .trays {
         display: flex;
-        flex-direction: column;
-        gap: 15px;
-        color: white;
-        
-        .spool-color {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      
+        .tray {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          color: white;
+      
+          .spool-color {
             height: 20px;
+          }
         }
-    }
+      }
+  }
 }

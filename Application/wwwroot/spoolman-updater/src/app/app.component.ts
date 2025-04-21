@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { SpoolsService } from './service/spoolman.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,6 +18,7 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
     CommonModule,
     MatToolbarModule,
+    MatButtonModule,
     MatCardModule,
     MatSelectModule,
     MatFormFieldModule,
@@ -46,7 +48,7 @@ export class AppComponent {
 
   displaySpoolName(spool: Spool): string {
     return spool
-      ? `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} (#${spool.filament.color_hex})`
+      ? `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} (#${spool.filament.color_hex}) ${spool.remaining_weight}g`
       : '';
   }
 
@@ -54,8 +56,6 @@ export class AppComponent {
     const currentSpool = this.spools.filter((spool) =>
       spool.extra['active_tray']?.includes(tray.id)
     )[0];
-
-    console.log('Current Spool:', currentSpool);
 
     return currentSpool;
   }

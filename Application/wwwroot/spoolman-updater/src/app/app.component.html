@@ -1,38 +1,39 @@
-<mat-toolbar color="primary">
-  Spoolman Updater
-</mat-toolbar>
+<mat-toolbar color="primary"> Spoolman Updater </mat-toolbar>
 
-<mat-card>
-  <mat-card-content class="trays">
-    
-    @for (tray of trays; track tray; let index = $index)
-    {
+<div class="tray-container">
+  @for (tray of trays; track tray; let index = $index) {
+  <mat-card class="tray-card">
+    <mat-card-content class="trays">
       <div class="tray" [style]="{ 'background-color': tray.color }">
-        <h3>Tray {{index + 1}}</h3>
+        <h3>Tray {{ index + 1 }}</h3>
 
         <ng-container *ngIf="getCurrentSpool(tray) as currentSpool">
-          <div class="spool-color" [style.background-color]="'#' + currentSpool.filament.color_hex">
-            
-          </div>
-          <span>{{displaySpoolName(currentSpool)}}</span>
+          <div
+            class="spool-color"
+            [style.background-color]="'#' + currentSpool.filament.color_hex"
+          ></div>
+          <span>{{ displaySpoolName(currentSpool) }}</span>
 
-          <span>Remaining: {{currentSpool.remaining_weight}}g</span>
+          <span>Remaining: {{ currentSpool.remaining_weight }}g</span>
         </ng-container>
-        
+
         <mat-form-field>
           <mat-label>Select a spool</mat-label>
-          <mat-select [(value)]="tray.selectedSpool" (selectionChange)="onSpoolChange($event, tray)">
-            @for(spool of spools; track spool; let index = $index)
-            {
-              <mat-option [value]="spool.id">{{displaySpoolName(spool)}}</mat-option>
+          <mat-select
+            [(value)]="tray.selectedSpool"
+            (selectionChange)="onSpoolChange($event, tray)"
+          >
+            @for(spool of spools; track spool; let index = $index) {
+            <mat-option [value]="spool.id">{{
+              displaySpoolName(spool)
+            }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
-        <button mat-button (click)="updateTray(tray)">Select</button>
+        <button mat-raised-button color="warning" (click)="updateTray(tray)">Select</button>
       </div>
-    }
-
-
-  </mat-card-content>
-</mat-card>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>
