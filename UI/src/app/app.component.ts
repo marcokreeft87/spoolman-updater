@@ -37,12 +37,12 @@ export class AppComponent {
     private spoolService: SpoolsService,
     private trayService: TrayService
   ) {
-    this.spoolService.getSpools().subscribe((spools) => {
+    this.spoolService.getSpools().subscribe((spools: Spool[]) => {
       this.spools = spools;
     });
 
-    this.trayService.getTrays().subscribe((trays) => {
-      this.trays = trays.trays;
+    this.trayService.getTrays().subscribe((trays: Tray[]) => {
+      this.trays = trays;
     });
   }
 
