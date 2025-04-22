@@ -24,6 +24,8 @@ secrets.json
 npm-debug.log
 yarn.lock
 node_modules/
+**/node_modules
+**/dist
 
 # Ignore Docker files that shouldn’t be copied
 Dockerfile
