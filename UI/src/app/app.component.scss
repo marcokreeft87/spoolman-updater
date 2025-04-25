@@ -1,46 +1,100 @@
-.tray-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: flex-start;
-  padding: 24px;
+.app-root {
+  .ams-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 24px;
 
-  .tray-card {
-    flex: 1 1 calc(33.333% - 16px);
-    box-sizing: border-box;
-    min-width: 250px;
-    max-width: 400px;
-    color: white;
-
-    .mat-mdc-card-header {
-      border-bottom: 1px solid gray;
-      padding: 16px;
-    }
-
-    .trays {
+    .ams-card {
+      color: white;
+      background-color: gray;
+      flex: 1;
       display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      padding: 16px;
 
-      .tray {
-        width: 100%;
+      .tray-container {
+        flex: 1;
         display: flex;
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        gap: 16px;
+        padding: 16px;
 
-        .spool-color {
-          height: 20px;
-          padding: 8px;
+        .tray-card {
+          flex: 1 1 calc(33.333% - 16px);
+          box-sizing: border-box;
+          min-width: 250px;
+          max-width: 400px;
+          color: white;
+
+          .mat-mdc-card-header {
+            border-bottom: 1px solid gray;
+            padding: 16px;
+          }
+
+          .trays {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 16px;
+
+            .tray {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              gap: 15px;
+
+              .spool-color {
+                height: 20px;
+                padding: 8px;
+              }
+            }
+          }
+
+          .mat-mdc-card-actions {
+            button {
+              width: 100%;
+            }
+          }
+
+          .mdc-list-item {
+            padding: 8px;
+          }
         }
       }
     }
+  }
 
-    .mat-mdc-card-actions {
-      button {
-        width: 100%;
+  @media (width <= 1250px) {
+    .ams-container {
+      .ams-card {
+        .tray-container {
+          flex-direction: column;
+          gap: 16px;
+        }
+      }
+    }
+  }
+
+  
+}
+
+.cdk-overlay-container {
+  .spool-option {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid grey;
+
+    .spool-color {
+      width: 25px;
+      height: 25px;
+    }
+    
+    .mat-divider {
+      .mat-divider-inset {
+        margin-left: 0px !important;
       }
     }
   }

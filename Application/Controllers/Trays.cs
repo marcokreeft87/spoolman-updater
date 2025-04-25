@@ -8,6 +8,6 @@ namespace Application.Controllers;
 public class TraysController(IInputHandler handler) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] GetAllTraysInput input) =>    
+    public async Task<IActionResult> Get([FromQuery] GetAllAMSInput input) =>    
         Ok(await handler.HandleAsync(input));
 }

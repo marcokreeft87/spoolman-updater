@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Host, HostBinding, ViewEncapsulation } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TrayService } from './service/tray.service';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Tray } from './models/tray';
+import { AMSEntity, Tray } from './models/tray';
 import { Spool } from './models/spool';
 import { CommonModule } from '@angular/common';
 
@@ -21,17 +21,21 @@ import { CommonModule } from '@angular/common';
     MatButtonModule,
     MatCardModule,
     MatSelectModule,
-    MatFormFieldModule,
+    MatFormFieldModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [SpoolsService, TrayService],
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
+  @HostBinding('class') className = 'app-root';
+  
   title = 'spoolman-updater';
 
   spools: Spool[] = [];
-  trays: Tray[] = [];
+  amsEntities: AMSEntity[] = [];
+  externalSpoolEntity: Tray = {} as Tray;
 
   constructor(
     private spoolService: SpoolsService,
@@ -41,18 +45,24 @@ export class AppComponent {
       this.spools = spools;
     });
 
-    this.trayService.getTrays().subscribe((trays: Tray[]) => {
-      this.trays = trays;
+    this.trayService.getTrays().subscribe(({ ams_entities, external_spool_entity }) => {
+      this.amsEntities = ams_entities;
+      this.externalSpoolEntity = external_spool_entity;
+      console.log(this.amsEntities);
     });
   }
 
   displaySpoolName(spool: Spool): string {
     return spool
-      ? `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} (#${spool.filament.color_hex}) ${spool.remaining_weight}g`
+      ? `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} - ${spool.remaining_weight}g`
       : '';
   }
 
-  getCurrentSpool(tray: Tray): Spool {
+  getCurrentSpool(tray: Tray | undefined): Spool {
+    if (!tray) {
+      return {} as Spool;
+    }
+
     const currentSpool = this.spools.filter((spool) =>
       spool.extra['active_tray']?.includes(tray.id)
     )[0];

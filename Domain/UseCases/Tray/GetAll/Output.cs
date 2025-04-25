@@ -2,12 +2,15 @@
 
 namespace Domain;
 
-internal class GetAllTraysOutput : IOutput
+internal class GetAllAMSOutput : IOutput
 {
-    public GetAllTraysOutput(List<TrayInfo> trays)
+    public GetAllAMSOutput(List<AMSEntity> amsEntities, TrayInfo extranalTray)
     {
-        Trays = trays;
+        AMSEntities = amsEntities;
+        ExternalSpoolEntity = extranalTray;
     }
 
-    public List<TrayInfo> Trays { get; }
+    public List<AMSEntity> AMSEntities { get; }
+
+    public TrayInfo? ExternalSpoolEntity { get; }
 }

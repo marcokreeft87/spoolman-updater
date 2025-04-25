@@ -4,5 +4,6 @@ public class HomeAssistantConfiguration
 {
     public string Url { get; set; } = string.Empty;
     public string Token { get; set; } = string.Empty;
-    public string TraySensorPrefix { get; set; } = string.Empty;
+    public string ExternalSpoolEntity { get; set; } = string.Empty;
+    public string[] AMSEntities { get; set; } = Array.Empty<string>();   
 }

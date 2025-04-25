@@ -1,48 +1,122 @@
 <mat-toolbar color="primary"> Spoolman Updater </mat-toolbar>
 
-<div class="tray-container">
-  @for (tray of trays; track tray; let index = $index) {
-  <mat-card class="tray-card">
-    <mat-card-header>
-      <mat-card-title>Tray {{ index + 1 }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="trays">
-      <div class="tray" [style]="{ 'background-color': tray.color }">
+<div class="ams-container">
+  @for (ams of amsEntities; track ams; let index = $index) {
+    <mat-card class="ams-card">
+      <mat-card-header>
+        <mat-card-title>AMS {{ index + 1 }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="ams">
+        <div class="tray-container">
 
-        <ng-container *ngIf="getCurrentSpool(tray) as currentSpool">
-          
-          <span>{{ currentSpool.filament.vendor.name }}</span>
-          <span>{{ currentSpool.filament.material }}</span>
-          <span>{{ currentSpool.filament.name }}</span>
-          
-          <div
-            class="spool-color"
-            [style.background-color]="'#' + currentSpool.filament.color_hex"
-          >#{{ currentSpool.filament.color_hex }}</div>
+          @for (tray of ams.trays; track tray; let index = $index) {
+            <mat-card class="tray-card">
+              <mat-card-header>
+                <mat-card-title>Tray {{ index + 1 }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="trays">
+                <div class="tray">
 
-          <span>Remaining: {{ currentSpool.remaining_weight }}g</span>
-        </ng-container>
+                  <ng-container *ngIf="getCurrentSpool(tray) as currentSpool">
+                    
+                    <span>{{ currentSpool.filament.vendor.name }}</span>
+                    <span>{{ currentSpool.filament.material }}</span>
+                    <span>{{ currentSpool.filament.name }}</span>
+                    
+                    <div
+                      class="spool-color"
+                      [style.background-color]="'#' + currentSpool.filament.color_hex"
+                    >#{{ currentSpool.filament.color_hex }}</div>
 
-        <mat-form-field>
-          <mat-label>Select a spool</mat-label>
-          <mat-select
-            [(value)]="tray.selectedSpool"
-            (selectionChange)="onSpoolChange($event, tray)"
-          >
-            @for(spool of spools; track spool; let index = $index) {
-            <mat-option [value]="spool.id">{{
-              displaySpoolName(spool)
-            }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+                    <span>Remaining: {{ currentSpool.remaining_weight }}g</span>
+                  </ng-container>
 
-       
+                  <mat-form-field>
+                    <mat-label>Select a spool</mat-label>
+                    <mat-select
+                      [(value)]="tray.selectedSpool"
+                      (selectionChange)="onSpoolChange($event, tray)"
+                    >
+                      @for(spool of spools; track spool; let index = $index) {
+                      <mat-option [value]="spool.id">
+                        <div class="spool-option">
+                          <div class="spool-color" [style.background-color]="'#' + spool.filament.color_hex"></div>
+                          <div>{{ displaySpoolName(spool) }}</div>
+                        </div>       
+                        </mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+
+                
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="updateTray(tray)">Select</button>
+              </mat-card-actions>
+            </mat-card>
+          }
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
+
+<div class="ams-container">
+  <mat-card class="ams-card">
+    <mat-card-content class="ams">
+      <div class="tray-container">
+        <mat-card class="tray-card">
+          <mat-card-header>
+            <mat-card-title>External Spool</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="trays">
+            <div class="tray">
+
+              <ng-container *ngIf="getCurrentSpool(externalSpoolEntity) as currentSpool">
+                
+                <span>{{ currentSpool.filament.vendor.name }}</span>
+                <span>{{ currentSpool.filament.material }}</span>
+                <span>{{ currentSpool.filament.name }}</span>
+                
+                <div
+                  class="spool-color"
+                  [style.background-color]="'#' + currentSpool.filament.color_hex"
+                >#{{ currentSpool.filament.color_hex }}</div>
+
+                <span>Remaining: {{ currentSpool.remaining_weight }}g</span>
+              </ng-container>
+
+              <ng-container *ngIf="!getCurrentSpool(externalSpoolEntity)">
+                <h3>No spool selected</h3>
+              </ng-container>
+
+              <mat-form-field>
+                <mat-label>Select a spool</mat-label>
+                <mat-select
+                  [(value)]="externalSpoolEntity.selectedSpool"
+                  (selectionChange)="onSpoolChange($event, externalSpoolEntity)"
+                >
+                  @for(spool of spools; track spool; let index = $index) {
+                  <mat-option [value]="spool.id">
+                    <div class="spool-option">
+                      <div class="spool-color" [style.background-color]="'#' + spool.filament.color_hex"></div>
+                      <div>{{ displaySpoolName(spool) }}</div>
+                    </div>       
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+            
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="updateTray(externalSpoolEntity)">Select</button>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="updateTray(tray)">Select</button>
-    </mat-card-actions>
   </mat-card>
-  }
 </div>

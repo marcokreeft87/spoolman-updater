@@ -6,3 +6,8 @@ export interface Tray {
   type: string;
   selectedSpool: string;
 }
+
+export interface AMSEntity {
+  id: string;
+  trays: Tray[];
+}

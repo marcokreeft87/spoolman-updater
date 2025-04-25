@@ -19,27 +19,46 @@ public class HomeAssistantClient
         this.configuration = configuration;
     }
 
-    public async Task<TrayInfo?> GetTrayInfoAsync(int trayIndex)
+    public async Task<List<AMSEntity>> GetAmsInfoAsync()
     {
-        string sensorEntity = $"{configuration.TraySensorPrefix}{trayIndex}";
+        var amsEntities = new List<AMSEntity>();
+        foreach(var amsEntity in configuration.AMSEntities)
+        {
+            var trays = await GetAllTrayInfoAsync(amsEntity);
 
-        var response = await _httpClient.GetFromJsonAsync<HomeAssistantState>($"{_baseUrl}/api/states/{sensorEntity}");
+            var amsEntityInfo = new AMSEntity
+            {
+                Id = amsEntity,
+                Trays = trays
+            };
+
+            amsEntities.Add(amsEntityInfo);
+        }  
+        
+        return amsEntities;
+    }
+
+    public async Task<TrayInfo?> GetExternalSpoolAsync() => await GetTrayInfoAsync(configuration.ExternalSpoolEntity);
+
+    private async Task<TrayInfo?> GetTrayInfoAsync(string entity)
+    {
+        var response = await _httpClient.GetFromJsonAsync<HomeAssistantState>($"{_baseUrl}/api/states/{entity}");
 
         var trayInfo = response?.Attributes;
-        
-        trayInfo.Id = sensorEntity.Replace("sensor.", string.Empty);
+
+        trayInfo.Id = entity.Replace("sensor.", string.Empty);
 
         return trayInfo;
     }
 
-    public async Task<List<TrayInfo?>> GetAllTrayInfoAsync()
+    private async Task<List<TrayInfo?>> GetAllTrayInfoAsync(string amsEntity)
     {
         var trayTasks = new List<Task<TrayInfo?>>
         {
-            GetTrayInfoAsync(1),
-            GetTrayInfoAsync(2),
-            GetTrayInfoAsync(3),
-            GetTrayInfoAsync(4)
+            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_1"),
+            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_2"),
+            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_3"),
+            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_4")
         };
 
         var results = await Task.WhenAll(trayTasks);

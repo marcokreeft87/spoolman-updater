@@ -1,5 +1,5 @@
 ﻿namespace Domain;
 
-public class GetAllTraysInput : IInput
+public class GetAllAMSInput : IInput
 {
 }
