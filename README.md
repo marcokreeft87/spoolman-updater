@@ -172,7 +172,7 @@ actions:
       filament_tag_uid: "{{ tag_uid }}"
       filament_used_weight: "{{ tray_weight }}"
       filament_color: "{{ color }}"
-      filament_active_tray_id: "{{ tray_sensor | replace('sensor.x1c_', '') }}"
+      filament_active_tray_id: "{{ tray_sensor | replace('sensor.', '') }}"
     action: rest_command.update_spool
   - action: utility_meter.calibrate
     data:
