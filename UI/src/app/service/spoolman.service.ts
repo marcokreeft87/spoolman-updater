@@ -8,7 +8,7 @@ import { Spool } from '../models/spool';
   providedIn: 'root',
 })
 export class SpoolsService {
-  private baseUrl = 'https://localhost:7042/'; // change if your API is prefixed
+  private baseUrl = '/'; // change if your API is prefixed
 
   constructor(private http: HttpClient) {}
 
