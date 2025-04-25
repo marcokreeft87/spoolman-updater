@@ -8,8 +8,20 @@ internal class FieldSpoolmanEndpoint(SpoolmanConfiguration configuration) : Spoo
 
     protected override string Endpoint => "field";
 
-    public async Task<bool> CheckFieldExistence() =>
-        await GetFieldAsync(FieldType, "tag") != null;
+    public async Task<bool> CheckFieldExistence()
+    {
+        var tasks = new[]
+        {
+            GetFieldAsync(FieldType, "tag"),
+            GetFieldAsync(FieldType, "active_tray"),
+            GetFieldAsync(FieldType, "barcode"),
+        };
+
+        var results = await Task.WhenAll(tasks);
+
+        // Return true if any of the results are not null
+        return results.Any(field => field != null);
+    }
 
     private async Task<Field> GetFieldAsync(EntityType fieldType, string key)
     {

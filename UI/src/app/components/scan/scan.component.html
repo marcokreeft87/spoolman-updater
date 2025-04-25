@@ -1,0 +1,58 @@
+<mat-card class="tray-card">
+    <mat-card-header>
+        <mat-card-title>
+            <h1>Select a tray
+            </h1>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="ams">
+        <div class="ams-container">
+            <ng-container *ngIf="amsEntities.length > 0; else noAmsMessage">
+                @for (ams of amsEntities; track ams; let index = $index) {
+                    
+                    <mat-card class="ams-card">
+                        <mat-card-header>
+                          <mat-card-title>AMS {{ index + 1 }}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content class="ams-card-content">
+                            
+                            @for (tray of ams.trays; track tray; let trayIndex = $index) {
+                                
+                                <button mat-raised-button color="primary" (click)="updateTray(tray)">
+                                    <span>Tray {{ trayIndex + 1 }}</span>
+                                </button>
+                            }
+                        </mat-card-content>
+                    </mat-card>
+
+                    
+                }
+            </ng-container>            
+
+            <ng-template #noAmsMessage>
+                <p>No AMS found</p>
+            </ng-template>
+
+            <ng-container *ngIf="amsEntities.length > 0; else noExternalSpoolMessage">
+                <mat-card class="ams-card">
+                    <mat-card-header>
+                        <mat-card-title>External Spool</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content class="ams-card-content">
+                        <button mat-raised-button color="primary">
+                            <span>External Spool</span>
+                        </button>
+                    </mat-card-content>
+                </mat-card>
+                
+            </ng-container>       
+
+            <ng-template #noExternalSpoolMessage>
+                <p>No External Spool found</p>
+            </ng-template>
+        </div>
+    </mat-card-content>
+
+
+</mat-card>

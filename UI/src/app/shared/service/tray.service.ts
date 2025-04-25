@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class TrayService {
-  private baseUrl = 'https://localhost:7042/'; // change if your API is prefixed
+  private baseUrl = '/'; // change if your API is prefixed
 
   constructor(private http: HttpClient) {}
 

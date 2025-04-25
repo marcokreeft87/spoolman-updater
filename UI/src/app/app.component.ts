@@ -2,14 +2,15 @@ import { Component, Host, HostBinding, ViewEncapsulation } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { SpoolsService } from './service/spoolman.service';
+import { SpoolsService } from './shared/service/spoolman.service';
 import { HttpClientModule } from '@angular/common/http';
-import { TrayService } from './service/tray.service';
+import { TrayService } from './shared/service/tray.service';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { AMSEntity, Tray } from './models/tray';
-import { Spool } from './models/spool';
+import { AMSEntity, Tray } from './shared/models/tray';
+import { Spool } from './shared/models/spool';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -18,10 +19,7 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
     CommonModule,
     MatToolbarModule,
-    MatButtonModule,
-    MatCardModule,
-    MatSelectModule,
-    MatFormFieldModule
+    RouterModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -31,61 +29,4 @@ import { CommonModule } from '@angular/common';
 export class AppComponent {
   @HostBinding('class') className = 'app-root';
   
-  title = 'spoolman-updater';
-
-  spools: Spool[] = [];
-  amsEntities: AMSEntity[] = [];
-  externalSpoolEntity: Tray = {} as Tray;
-
-  constructor(
-    private spoolService: SpoolsService,
-    private trayService: TrayService
-  ) {
-    this.spoolService.getSpools().subscribe((spools: Spool[]) => {
-      this.spools = spools;
-    });
-
-    this.trayService.getTrays().subscribe(({ ams_entities, external_spool_entity }) => {
-      this.amsEntities = ams_entities;
-      this.externalSpoolEntity = external_spool_entity;
-      console.log(this.amsEntities);
-    });
-  }
-
-  displaySpoolName(spool: Spool): string {
-    return spool
-      ? `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} - ${spool.remaining_weight}g`
-      : '';
-  }
-
-  getCurrentSpool(tray: Tray | undefined): Spool {
-    if (!tray) {
-      return {} as Spool;
-    }
-
-    const currentSpool = this.spools.filter((spool) =>
-      spool.extra['active_tray']?.includes(tray.id)
-    )[0];
-
-    return currentSpool;
-  }
-
-  onSpoolChange(selectChange: MatSelectChange, tray: Tray): void {
-    const selectedSpoolId = selectChange.value;
-
-    this.setSpoolToTray(selectedSpoolId, tray);
-  }
-
-  setSpoolToTray(selectedSpoolId: string, tray: Tray): void {
-    tray.selectedSpool = selectedSpoolId;
-  }
-
-  updateTray(tray: Tray): void {
-    this.spoolService
-      .updateTray({
-        spool_id: tray.selectedSpool,
-        active_tray_id: tray.id,
-      })
-      .subscribe();
-  }
 }

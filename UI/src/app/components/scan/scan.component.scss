@@ -1,0 +1,22 @@
+:host {
+    color: white;
+    
+    .ams-container {
+        display: flex;
+        gap: 16px;
+        padding: 24px;
+      
+        .ams-card {
+          color: white;
+          background-color: gray;
+      
+          .ams-card-content {
+            display: flex;
+            gap: 16px;
+            padding: 16px;;
+          }
+        }
+      }
+      
+}
+

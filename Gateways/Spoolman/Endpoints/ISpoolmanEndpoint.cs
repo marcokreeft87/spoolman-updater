@@ -26,6 +26,8 @@ public interface ISpoolEndpoint
     Task<List<Spool>> GetCurrentSpoolsInTray(string trayId);
 
     Task<List<Spool>> GetAllAsync();
+
+    Task<List<Spool>> GetSpoolsByBarcode(string barcode);
 }
 
 public interface IFieldEndpoint
