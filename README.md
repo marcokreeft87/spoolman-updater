@@ -53,8 +53,29 @@ The API requires the following environment variables to be set:
 ```
 APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local
 APPLICATION__HOMEASSISTANT__TOKEN=your-token
-APPLICATION__HOMEASSISTANT__TRAYSENSORPREFIX=sensor.x1c_tray_sensor_
+APPLICATION__HOMEASSISTANT__AMSENTITIES=sensor.x1c_ams_1
+APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool
 APPLICATION__SPOOLMAN__URL=http://spoolman.local
+
+
+
+{
+  "Application": {
+    "HomeAssistant": {
+      "Url": "http://192.168.2.4:8123",
+      "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZGYzNGE2MmIyMTI0YmI3OTI0OTVjM2VmMTFlYWI5ZiIsImlhdCI6MTc0MTc5OTQwMCwiZXhwIjoyMDU3MTU5NDAwfQ.MG_gLT4NBkMrvCNavgk1fB3rXN9mu9RptGOsgzyBIT4",
+      "AMSEntities": [
+        "X1C_00M09C422100420_AMS_1"
+      ],
+      "ExternalSpoolEntity": "sensor.x1x_externalspool_external_spool"
+    },
+    "Spoolman": {
+      "Url": "http://192.168.2.186:7912",
+      "PrinterId": "00M09C422100420"
+    }
+  }
+}
+
 ```
 
 ## Running with Docker
@@ -72,7 +93,8 @@ docker run -d -p 8088:8080 \
   -e APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local \
   -e APPLICATION__HOMEASSISTANT__TOKEN=your-token \
   -e APPLICATION__SPOOLMAN__URL=http://spoolman.local \
-  -e APPLICATION__HOMEASSISTANT__TRAYSENSORPREFIX=sensor.x1c_tray_sensor_ \
+  -e APPLICATION__HOMEASSISTANT__AMSENTITIES=sensor.x1c_ams_1 \
+  -e APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool \
   --name spoolman-updater spoolman-updater
 ```
 
@@ -150,7 +172,7 @@ actions:
       filament_tag_uid: "{{ tag_uid }}"
       filament_used_weight: "{{ tray_weight }}"
       filament_color: "{{ color }}"
-      filament_active_tray_id: "{{ tray_sensor | replace('sensor.x1c_', '') }}"
+      filament_active_tray_id: "{{ tray_sensor | replace('sensor.', '') }}"
     action: rest_command.update_spool
   - action: utility_meter.calibrate
     data:
