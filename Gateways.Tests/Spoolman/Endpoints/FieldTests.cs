@@ -36,11 +36,19 @@ namespace Gateways.Tests
         {
             mockHandler
                 .When("/api/v1/field/spool")
-                .Respond("application/json", "[{\"name\":\"tag\",\"order\":0,\"field_type\":\"text\",\"key\":\"tag\",\"entity_type\":\"spool\"}]");
+                .Respond("application/json", "[{\"name\":\"tag\",\"order\":0,\"field_type\":\"text\",\"key\":\"tag\",\"entity_type\":\"spool\"},{\"name\":\"Active Tray\",\"order\":1,\"field_type\":\"text\",\"default_value\":\"\\\"\\\"\",\"key\":\"active_tray\",\"entity_type\":\"spool\"},{\"name\":\"barcode\",\"order\":0,\"field_type\":\"text\",\"key\":\"barcode\",\"entity_type\":\"spool\"}]");
 
             mockHandler
                 .When("/api/v1/field/filament")
                 .Respond("application/json", "[]");
+
+            mockHandler
+                .When(HttpMethod.Post, "/api/v1/field/filament/barcode")
+                .Respond("application/json", "[{\"name\":\"barcode\",\"order\":0,\"field_type\":\"text\",\"key\":\"barcode\",\"entity_type\":\"filament\"}]");
+
+            mockHandler
+                .When(HttpMethod.Post, "/api/v1/field/filament/active_tray")
+                .Respond("application/json", "[{\"name\":\"active_tray\",\"order\":0,\"field_type\":\"text\",\"key\":\"active_tray\",\"entity_type\":\"filament\"}]");
 
             mockHandler
                 .When(HttpMethod.Post, "/api/v1/field/filament/tag")
