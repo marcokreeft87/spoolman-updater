@@ -24,7 +24,7 @@ import { SpoolItemComponent } from "../spool/spool.component";
   styleUrls: ['./tray.component.scss'],
 })
 export class TrayComponent implements OnInit {
-  @Input() tray: Tray | undefined;
+  @Input() tray: Tray | null = null;
   @Input() spools: Spool[] = [];
   @Input() name: string = '';
 
@@ -42,7 +42,7 @@ export class TrayComponent implements OnInit {
       : '';
   }
 
-  getCurrentSpool(tray: Tray | undefined): Spool {
+  getCurrentSpool(tray: Tray | null): Spool {
     if (!tray) {
       return {} as Spool;
     }

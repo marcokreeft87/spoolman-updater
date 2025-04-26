@@ -1,5 +1,5 @@
 <div class="ams-container">
-  @for (ams of amsEntities; track ams; let index = $index) {
+  @for (ams of amsEntities | async; track ams; let index = $index) {
     <mat-card class="ams-card">
       <mat-card-header>
         <mat-card-title>AMS {{ index + 1 }}</mat-card-title>
@@ -23,7 +23,7 @@
     <mat-card-content class="ams">
       <div class="tray-container">
         
-        <app-tray [tray]="externalSpoolEntity" [spools]="spools" name="External Spool"></app-tray>
+        <app-tray [tray]="externalSpoolEntity | async" [spools]="spools" name="External Spool"></app-tray>
         
       </div> 
     </mat-card-content>
