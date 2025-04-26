@@ -1,0 +1,31 @@
+<div class="ams-container">
+  @for (ams of amsEntities; track ams; let index = $index) {
+    <mat-card class="ams-card">
+      <mat-card-header>
+        <mat-card-title>AMS {{ index + 1 }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="ams">
+        <div class="tray-container">
+
+          @for (tray of ams.trays; track tray; let index = $index) {
+            
+              <app-tray [tray]="tray" [spools]="spools" [name]="'Tray ' + (index + 1)"></app-tray>
+          }
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
+
+<div class="ams-container">
+  <mat-card class="ams-card">
+    <mat-card-content class="ams">
+      <div class="tray-container">
+        
+        <app-tray [tray]="externalSpoolEntity" [spools]="spools" name="External Spool"></app-tray>
+        
+      </div> 
+    </mat-card-content>
+  </mat-card>
+</div>
