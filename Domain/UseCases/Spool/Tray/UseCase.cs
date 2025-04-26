@@ -15,8 +15,11 @@ internal sealed class UpdateTrayUseCase(SpoolmanClient spoolmanClient) : IUseCas
             await spoolmanClient.SetActiveTray(currentSpool.Id.Value, string.Empty);
         }
 
-        var spool = await spoolmanClient.SetActiveTray(input.SpoolId, input.ActiveTrayId);
+        if (!await spoolmanClient.SetActiveTray(input.SpoolId, input.ActiveTrayId))
+            throw new InvalidOperationException($"Update Spool with ID {input.SpoolId} not successfull.");
 
-        return new UpdateTrayOutput(spool != null);
+        var spool = await spoolmanClient.GetByIdAsync(input.SpoolId);
+
+        return new UpdateTrayOutput(spool);
     }
 }

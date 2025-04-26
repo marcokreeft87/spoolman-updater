@@ -1,9 +1,13 @@
 ﻿
+
 namespace Gateways;
 
 public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spoolEndpoint, IFieldEndpoint fieldEndpoint)
 {
     public async Task<List<Spool>> GetAllAsync() => await spoolEndpoint.GetAllAsync();
+
+    public async Task<List<Spool>> GetByBarcodeAsync(string barcode) =>
+        await spoolEndpoint.GetSpoolsByBarcode(barcode);
 
     public async Task<bool> UseSpoolWeightAsync(int spoolId, float usedWeight) =>
         await spoolEndpoint.UseSpoolWeight(spoolId, usedWeight);
@@ -22,4 +26,6 @@ public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spool
 
     public async Task CheckFieldExistence() =>
         await fieldEndpoint.CheckFieldExistence();
+
+    public async Task<Spool> GetByIdAsync(int spoolId) => await spoolEndpoint.GetByIdAsync(spoolId);
 }

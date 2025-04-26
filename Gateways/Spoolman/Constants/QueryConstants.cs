@@ -12,4 +12,7 @@ internal static class FilamentQueryConstants
     public static string Material = "material";
 
     public static string VendorName = "vendor.name";
+
+    public static string ActiveTrayId = "active_tray";
+    public static string TagUid = "tag";
 }
