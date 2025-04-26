@@ -10,7 +10,7 @@ import { SpoolsService } from '../../shared/service/spoolman.service';
 import { TrayService } from '../../shared/service/tray.service';
 import { AMSEntity, Tray } from '../../shared/models/tray';
 import { Spool } from '../../shared/models/spool';
-import { TrayComponent } from '../../shared/components/spool/tray.component';
+import { TrayComponent } from '../../shared/components/tray/tray.component';
 
 @Component({
   selector: 'spool-component',

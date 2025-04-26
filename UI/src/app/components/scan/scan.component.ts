@@ -6,12 +6,13 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { AMSEntity, Tray } from '../../shared/models/tray';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SpoolItemComponent } from '../../shared/components/spool/spool.component';
 
 @Component({
   selector: 'app-scan',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, SpoolItemComponent],
   templateUrl: './scan.component.html',
   styleUrl: './scan.component.scss',
   providers: [SpoolsService, TrayService],
@@ -24,6 +25,7 @@ export class ScanComponent {
   constructor(
     private route: ActivatedRoute,
     private spoolService: SpoolsService, 
+    private router: Router,
     trayService: TrayService
   ) {
 
@@ -54,6 +56,6 @@ export class ScanComponent {
         spool_id: this.spool.id.toString(),
         active_tray_id: tray.id,
       })
-      .subscribe();
+      .subscribe(_ => this.router.navigate(['/']));
   }
 }

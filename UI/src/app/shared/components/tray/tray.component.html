@@ -4,20 +4,8 @@
   </mat-card-header>
   <mat-card-content class="trays">
     <div class="tray" >
-      <ng-container *ngIf="currentSpool">
-        <span>{{ currentSpool.filament.vendor.name }}</span>
-        <span>{{ currentSpool.filament.material }}</span>
-        <span>{{ currentSpool.filament.name }}</span>
 
-        <div
-          class="spool-color"
-          [style.background-color]="'#' + currentSpool.filament.color_hex"
-        >
-          #{{ currentSpool.filament.color_hex }}
-        </div>
-
-        <span>Remaining: {{ currentSpool.remaining_weight }}g</span>
-      </ng-container>
+      <app-spool-item [spool]="currentSpool"></app-spool-item>
 
       <mat-form-field *ngIf="spools.length > 0 && tray">
         <mat-label>Select a spool</mat-label>

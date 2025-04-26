@@ -7,6 +7,7 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Tray } from '../../models/tray';
 import { Spool } from '../../models/spool';
 import { SpoolsService } from '../../service/spoolman.service';
+import { SpoolItemComponent } from "../spool/spool.component";
 
 @Component({
   selector: 'app-tray',
@@ -17,8 +18,10 @@ import { SpoolsService } from '../../service/spoolman.service';
     MatSelectModule,
     MatFormFieldModule,
     CommonModule,
-  ],
-  templateUrl: './tray.component.html'
+    SpoolItemComponent
+],
+  templateUrl: './tray.component.html',
+  styleUrls: ['./tray.component.scss'],
 })
 export class TrayComponent implements OnInit {
   @Input() tray: Tray | undefined;

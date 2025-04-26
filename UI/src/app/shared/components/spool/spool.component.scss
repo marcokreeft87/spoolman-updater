@@ -1,0 +1,11 @@
+:host {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .spool-color {
+    height: 20px;
+    padding: 8px;
+  }
+}

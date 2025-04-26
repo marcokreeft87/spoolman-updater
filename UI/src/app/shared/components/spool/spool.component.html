@@ -1,0 +1,15 @@
+<ng-container *ngIf="spool">
+  <span>{{ spool.filament.vendor.name }}</span>
+  <span>{{ spool.filament.material }}</span>
+  <span>{{ spool.filament.name }}</span>
+
+  <div
+    class="spool-color"
+    [style.background-color]="'#' + spool.filament.color_hex"
+    [style.color]="getTextColor(spool.filament.color_hex)"
+  >
+    #{{ spool.filament.color_hex }}
+  </div>
+
+  <span>Remaining: {{ spool.remaining_weight }}g</span>
+</ng-container>
