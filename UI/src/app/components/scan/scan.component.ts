@@ -42,9 +42,7 @@ export class ScanComponent {
           this.amsEntities = ams_entities;
           this.externalSpoolEntity = external_spool_entity;
         });
-    });
-
-    
+    });    
   }
 
   updateTray(tray: Tray | undefined): void {

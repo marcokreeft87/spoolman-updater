@@ -1,16 +1,13 @@
 import { Component, Host, HostBinding, ViewEncapsulation } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { SpoolsService } from './shared/service/spoolman.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TrayService } from './shared/service/tray.service';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { AMSEntity, Tray } from './shared/models/tray';
-import { Spool } from './shared/models/spool';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 @Component({
   selector: 'app-root',
@@ -19,13 +16,28 @@ import { RouterModule } from '@angular/router';
     HttpClientModule,
     CommonModule,
     MatToolbarModule,
-    RouterModule
+    RouterModule,
+    MatButtonModule,
+    MatIconModule,
+    ZXingScannerModule
   ],
   templateUrl: './app.component.html',
-  providers: [SpoolsService, TrayService],
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./app.component.scss'],
+  providers: [SpoolsService, TrayService]
 })
 export class AppComponent {
-  @HostBinding('class') className = 'app-root';
-  
+  scanning = false;
+
+  constructor(private router: Router) {}
+
+  openScanner() {
+    this.scanning = true;
+  }
+
+  handleScan(barcode: string) {
+    this.scanning = false;
+
+    // Navigate with the scanned result as a query param
+    this.router.navigate(['/scan'], { queryParams: { barcode: barcode } });
+  }
 }

@@ -1,3 +1,15 @@
-<mat-toolbar color="primary"> Spoolman Updater </mat-toolbar>
+<mat-toolbar color="primary" class="toolbar"> 
+  <span class="title">Spoolman Updater</span>
+
+  <button mat-icon-button (click)="openScanner()">
+    <mat-icon>photo_camera</mat-icon>
+  </button>
+</mat-toolbar>
+
+<zxing-scanner
+  *ngIf="scanning"
+  (scanSuccess)="handleScan($event)"
+  class="full-screen-scanner"
+></zxing-scanner>
 
 <router-outlet></router-outlet>
