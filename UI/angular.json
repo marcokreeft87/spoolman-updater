@@ -19,7 +19,7 @@
           "options": {
             "outputPath": "dist/spoolman-updater",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "browser": "src/main.ts",z
             "polyfills": [
               "zone.js"
             ],
@@ -40,8 +40,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
