@@ -22,7 +22,6 @@ import { RouterModule } from '@angular/router';
     RouterModule
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
   providers: [SpoolsService, TrayService],
   encapsulation: ViewEncapsulation.None,
 })

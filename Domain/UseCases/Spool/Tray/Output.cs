@@ -1,5 +1,5 @@
-﻿namespace Domain;
+﻿using Gateways;
 
-internal class UpdateTrayOutput(bool success) : IOutput
-{
-}
+namespace Domain;
+
+internal record UpdateTrayOutput(Spool Spool) : IOutput;

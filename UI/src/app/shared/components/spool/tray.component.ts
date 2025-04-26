@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,23 +12,26 @@ import { SpoolsService } from '../../service/spoolman.service';
   selector: 'app-tray',
   standalone: true,
   imports: [
-      MatButtonModule,
-      MatCardModule,
-      MatSelectModule,
-      MatFormFieldModule,
-      CommonModule
+    MatButtonModule,
+    MatCardModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    CommonModule,
   ],
-  templateUrl: './tray.component.html',
-  styleUrl: './tray.component.scss'
+  templateUrl: './tray.component.html'
 })
-export class TrayComponent {
+export class TrayComponent implements OnInit {
   @Input() tray: Tray | undefined;
   @Input() spools: Spool[] = [];
   @Input() name: string = '';
 
-  constructor(
-      private spoolService: SpoolsService
-    ) { }
+  currentSpool: Spool | undefined;
+
+  constructor(private spoolService: SpoolsService) { }
+
+  ngOnInit(): void {
+    this.currentSpool = this.getCurrentSpool(this.tray);
+  }
 
   displaySpoolName(spool: Spool): string {
     return spool
@@ -55,18 +58,22 @@ export class TrayComponent {
   }
 
   setSpoolToTray(selectedSpoolId: string, tray: Tray): void {
-    tray.selectedSpool = selectedSpoolId;
+    tray.selectedSpool = selectedSpoolId;    
   }
 
   updateTray(tray: Tray | undefined): void {
-    if (!tray) 
-      return;    
+    if (!tray) return;
 
     this.spoolService
       .updateTray({
         spool_id: tray.selectedSpool,
         active_tray_id: tray.id,
       })
-      .subscribe();
+      .subscribe(spool => {
+        console.log('Tray updated successfully!');
+
+        this.currentSpool = spool;
+        console.log('Current spool:', spool);
+      });
   }
 }

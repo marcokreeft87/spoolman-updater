@@ -1,4 +1,5 @@
 ﻿
+
 namespace Gateways;
 
 public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spoolEndpoint, IFieldEndpoint fieldEndpoint)
@@ -25,4 +26,6 @@ public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spool
 
     public async Task CheckFieldExistence() =>
         await fieldEndpoint.CheckFieldExistence();
+
+    public async Task<Spool> GetByIdAsync(int spoolId) => await spoolEndpoint.GetByIdAsync(spoolId);
 }

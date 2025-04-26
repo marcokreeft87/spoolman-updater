@@ -44,7 +44,7 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 
         var allSpools = await GetAllAsync(string.Empty, false);
 
-        return allSpools?.Where(spool => spool.Extra.ContainsKey("active_tray") && spool.Extra["active_tray"] == jsonEncoded).ToList() ?? new List<Spool>();
+        return allSpools?.Where(spool => spool.Extra.ContainsKey(FilamentQueryConstants.ActiveTrayId) && spool.Extra[FilamentQueryConstants.ActiveTrayId] == jsonEncoded).ToList() ?? new List<Spool>();
     }
 
     public async Task<Spool> GetOrCreateSpool(string vendorName, string material, string color, string activeTrayId, string tagUid)
@@ -55,12 +55,12 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
         {
             var jsonEncoded = JsonSerializer.Serialize(activeTrayId, JsonOptions);
 
-            predicate = predicate.And(spool => spool.Extra.ContainsKey("active_tray") && spool.Extra["active_tray"] == jsonEncoded);
+            predicate = predicate.And(spool => spool.Extra.ContainsKey(FilamentQueryConstants.ActiveTrayId) && spool.Extra[FilamentQueryConstants.ActiveTrayId] == jsonEncoded);
         }        
         else if (!string.IsNullOrEmpty(tagUid))
         {
             var jsonEncoded = JsonSerializer.Serialize(tagUid, JsonOptions);
-            predicate = predicate.And(spool => spool.Extra.ContainsKey("tag") && spool.Extra["tag"] == jsonEncoded);
+            predicate = predicate.And(spool => spool.Extra.ContainsKey(FilamentQueryConstants.TagUid) && spool.Extra[FilamentQueryConstants.TagUid] == jsonEncoded);
         }
         else 
         {
@@ -90,10 +90,7 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
         if (spool == null)
             throw new InvalidOperationException($"Spool with ID {spoolId} not found.");
 
-        var extra = new Dictionary<string, string>();
-        extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
-
-        spool.Extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
+        spool.Extra[FilamentQueryConstants.ActiveTrayId] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
 
         return await UpdateAsync(spool.Id.Value, new
         {
@@ -122,12 +119,12 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 
         if (!Spool.IsEmptyTag(tagUid))
         {
-            extra["tag"] = JsonSerializer.Serialize(tagUid, JsonOptions);
+            extra[FilamentQueryConstants.TagUid] = JsonSerializer.Serialize(tagUid, JsonOptions);
         }
 
         if (!string.IsNullOrEmpty(activeTrayId))
         {
-            extra["active_tray"] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
+            extra[FilamentQueryConstants.ActiveTrayId] = JsonSerializer.Serialize(activeTrayId, JsonOptions);
         }
 
         var newSpool = new Spool
@@ -142,4 +139,5 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
         return await PostAsync(newSpool);
     }
 
+    public async Task<Spool> GetByIdAsync(int spoolId) => await GetByIdAsync(spoolId.ToString());
 }

@@ -3,12 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { UpdateTrayInput } from '../models/updatetray';
 import { Spool } from '../models/spool';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpoolsService {
-  private baseUrl = '/'; // change if your API is prefixed
+  private baseUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -22,8 +23,8 @@ export class SpoolsService {
   /**
    * POST /Spools/tray
    */
-  updateTray(data: UpdateTrayInput): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}spools/tray`, data);
+  updateTray(data: UpdateTrayInput): Observable<Spool> {
+    return this.http.post<any>(`${this.baseUrl}spools/tray`, data).pipe(map(response => response.spool));
   }
 
   getByBarcode(barcode: string): Observable<Spool[]> {

@@ -4,7 +4,7 @@
   </mat-card-header>
   <mat-card-content class="trays">
     <div class="tray" >
-      <ng-container *ngIf="getCurrentSpool(tray) as currentSpool">
+      <ng-container *ngIf="currentSpool">
         <span>{{ currentSpool.filament.vendor.name }}</span>
         <span>{{ currentSpool.filament.material }}</span>
         <span>{{ currentSpool.filament.name }}</span>
