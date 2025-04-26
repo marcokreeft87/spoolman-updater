@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AMSEntity, Tray } from '../../shared/models/tray';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpoolItemComponent } from '../../shared/components/spool/spool.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-scan',
@@ -31,17 +32,15 @@ export class ScanComponent {
 
     this.route.queryParamMap.subscribe(params => {
       const barcode = params.get('barcode') ?? '';
-      
-      spoolService.getByBarcode(barcode).subscribe((spools: Spool[]) => {
-        this.spool = spools[0];
+
+      forkJoin({
+        spool: this.spoolService.getByBarcode(barcode),
+        trays: trayService.getTrays()
+      }).subscribe(({ spool, trays }) => {
+        this.spool = spool[0];
+        this.amsEntities = trays.ams_entities;
+        this.externalSpoolEntity = trays.external_spool_entity;
       });
-  
-      trayService
-        .getTrays()
-        .subscribe(({ ams_entities, external_spool_entity }) => {
-          this.amsEntities = ams_entities;
-          this.externalSpoolEntity = external_spool_entity;
-        });
     });    
   }
 

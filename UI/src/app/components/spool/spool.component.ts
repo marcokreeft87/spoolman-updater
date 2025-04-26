@@ -11,7 +11,7 @@ import { TrayService } from '../../shared/service/tray.service';
 import { AMSEntity, Tray } from '../../shared/models/tray';
 import { Spool } from '../../shared/models/spool';
 import { TrayComponent } from '../../shared/components/tray/tray.component';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subject } from 'rxjs';
 
 @Component({
   selector: 'spool-component',
@@ -42,15 +42,14 @@ export class SpoolComponent {
     private spoolService: SpoolsService,
     private trayService: TrayService
   ) {
-    this.spoolService.getSpools().subscribe((spools: Spool[]) => {
+    
+    forkJoin({
+      spools: this.spoolService.getSpools(),
+      trays: this.trayService.getTrays()
+    }).subscribe(({ spools, trays }) => {
       this.spools = spools;
+      this.amsEntities$.next(trays.ams_entities);
+      this.externalSpoolEntity$.next(trays.external_spool_entity);
     });
-
-    this.trayService.getTrays().subscribe(({ ams_entities, external_spool_entity }) => {
-      this.amsEntities$.next(ams_entities);
-      this.externalSpoolEntity$.next(external_spool_entity);
-    });
-  }
-
-  
+  }  
 }
