@@ -1,7 +1,7 @@
 
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxScannerQrcodeModule, LOAD_WASM, NgxScannerQrcodeComponent } from 'ngx-scanner-qrcode';
+import { NgxScannerQrcodeModule, NgxScannerQrcodeComponent } from 'ngx-scanner-qrcode';
 
 @Component({
   selector: 'app-camera-scan',
@@ -22,7 +22,16 @@ export class CameraScanComponent {
   scanning: boolean = false;
 
   startScanning() {
-    this.barcodeScanner.start();
+    this.barcodeScanner.start().subscribe((result) => {
+      this.barcodeScanner.devices.subscribe((devices) => {
+
+        const backCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
+
+        if (backCamera) {          
+          this.barcodeScanner.playDevice(backCamera.deviceId); 
+        }
+      });
+    });
   }
 
   stopScanning() {
