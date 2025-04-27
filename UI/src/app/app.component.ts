@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TrayService } from './shared/service/tray.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { CameraScanComponent } from './shared/components/scan/scan.component';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +19,11 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
     RouterModule,
     MatButtonModule,
     MatIconModule,
-    ZXingScannerModule
+    CameraScanComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers: [SpoolsService, TrayService]
+  providers: [SpoolsService, TrayService],
 })
 export class AppComponent {
   scanning = false;
@@ -34,10 +34,8 @@ export class AppComponent {
     this.scanning = true;
   }
 
-  handleScan(barcode: string) {
+  goToScan(barcode: string) {
     this.scanning = false;
-
-    // Navigate with the scanned result as a query param
     this.router.navigate(['/scan'], { queryParams: { barcode: barcode } });
   }
 }

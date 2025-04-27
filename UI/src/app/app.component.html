@@ -6,10 +6,6 @@
   </button>
 </mat-toolbar>
 
-<zxing-scanner
-  *ngIf="scanning"
-  (scanSuccess)="handleScan($event)"
-  class="full-screen-scanner"
-></zxing-scanner>
+<app-camera-scan [scanning]="scanning" (scanningComplete)="goToScan($event)"></app-camera-scan>
 
 <router-outlet></router-outlet>

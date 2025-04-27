@@ -1,0 +1,10 @@
+<zxing-scanner
+  *ngIf="scanning"
+  [device]="selectedDevice"
+  [formats]="formats"
+  [tryHarder]="true"
+  (camerasFound)="onCamerasFound($event)"
+  (scanSuccess)="handleScan($event)"
+  (permissionResponse)="onPermissionResponse($event)"
+  class="full-screen-scanner"
+></zxing-scanner>
