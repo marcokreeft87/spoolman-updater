@@ -1,16 +1,14 @@
 
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { BarcodeFormat } from '@zxing/library';
-import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BarcodeScannerLivestreamComponent, BarcodeScannerLivestreamModule } from 'ngx-barcode-scanner';
+import { NgxScannerQrcodeModule, LOAD_WASM, NgxScannerQrcodeComponent } from 'ngx-scanner-qrcode';
 
 @Component({
   selector: 'app-camera-scan',
   standalone: true,
   imports: [
     CommonModule,
-    BarcodeScannerLivestreamModule 
+    NgxScannerQrcodeModule
   ],
   templateUrl: './scan.component.html',
   styleUrls: ['./scan.component.scss'],
@@ -18,10 +16,10 @@ import { BarcodeScannerLivestreamComponent, BarcodeScannerLivestreamModule } fro
 export class CameraScanComponent {
   @Output() scanningComplete = new EventEmitter<string>();  
 
-  @ViewChild(BarcodeScannerLivestreamComponent)
-  barcodeScanner: BarcodeScannerLivestreamComponent = new BarcodeScannerLivestreamComponent();
+  @ViewChild(NgxScannerQrcodeComponent) barcodeScanner!: NgxScannerQrcodeComponent;
 
   barcodeValue: string = '';
+  scanning: boolean = false;
 
   startScanning() {
     this.barcodeScanner.start();
@@ -31,9 +29,8 @@ export class CameraScanComponent {
     this.barcodeScanner.stop();
   }
 
-  onValueChanges(result: any) {
-    this.barcodeValue = result.codeResult.code;
-    alert(this.barcodeValue);
+  onScanSuccess(scannedResult: any) {    
+    this.barcodeValue = scannedResult[0].value;
 
     this.scanningComplete.emit(this.barcodeValue);
   }

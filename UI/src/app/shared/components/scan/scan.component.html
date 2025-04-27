@@ -1,4 +1,1 @@
-<barcode-scanner-livestream
-  type="code_128"
-  (valueChanges)="onValueChanges($event)"
-></barcode-scanner-livestream>
+<ngx-scanner-qrcode #action="scanner" (event)="onScanSuccess($event)" (scanSuccess)="onScanSuccess($event)"></ngx-scanner-qrcode>
