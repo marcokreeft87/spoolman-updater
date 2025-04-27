@@ -1,10 +1,4 @@
-<zxing-scanner
-  *ngIf="scanning"
-  [device]="selectedDevice"
-  [formats]="formats"
-  [tryHarder]="true"
-  (camerasFound)="onCamerasFound($event)"
-  (scanSuccess)="handleScan($event)"
-  (permissionResponse)="onPermissionResponse($event)"
-  class="full-screen-scanner"
-></zxing-scanner>
+<barcode-scanner-livestream
+  type="code_128"
+  (valueChanges)="onValueChanges($event)"
+></barcode-scanner-livestream>

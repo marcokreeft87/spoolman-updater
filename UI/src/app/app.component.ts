@@ -1,4 +1,4 @@
-import { Component, Host, HostBinding, ViewEncapsulation } from '@angular/core';
+import { Component, Host, HostBinding, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,12 +26,20 @@ import { CameraScanComponent } from './shared/components/scan/scan.component';
   providers: [SpoolsService, TrayService],
 })
 export class AppComponent {
+  @ViewChild(CameraScanComponent)
+  scanComponent!: CameraScanComponent;
+
   scanning = false;
 
   constructor(private router: Router) {}
 
   openScanner() {
-    this.scanning = true;
+    this.scanning = !this.scanning;
+
+    if (this.scanning)
+      this.scanComponent.startScanning();
+    else
+      this.scanComponent.stopScanning();
   }
 
   goToScan(barcode: string) {

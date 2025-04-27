@@ -6,6 +6,6 @@
   </button>
 </mat-toolbar>
 
-<app-camera-scan [scanning]="scanning" (scanningComplete)="goToScan($event)"></app-camera-scan>
+<app-camera-scan (scanningComplete)="goToScan($event)"></app-camera-scan>
 
 <router-outlet></router-outlet>

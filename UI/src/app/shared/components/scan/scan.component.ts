@@ -1,49 +1,40 @@
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BarcodeScannerLivestreamComponent, BarcodeScannerLivestreamModule } from 'ngx-barcode-scanner';
 
 @Component({
-  selector: 'app-camera-scan[scanning]',
+  selector: 'app-camera-scan',
   standalone: true,
   imports: [
     CommonModule,
-    ZXingScannerModule
+    BarcodeScannerLivestreamModule 
   ],
   templateUrl: './scan.component.html',
   styleUrls: ['./scan.component.scss'],
 })
 export class CameraScanComponent {
-  @Input() scanning: boolean = false;
+  @Output() scanningComplete = new EventEmitter<string>();  
 
-  @Output() scanningComplete = new EventEmitter<string>();
+  @ViewChild(BarcodeScannerLivestreamComponent)
+  barcodeScanner: BarcodeScannerLivestreamComponent = new BarcodeScannerLivestreamComponent();
 
-  formats: BarcodeFormat[] = [BarcodeFormat.CODE_128];
+  barcodeValue: string = '';
 
-  handleScan(barcode: string) {
-    this.scanning = false;
-
-    // Navigate with the scanned result as a query param
-    //this.router.navigate(['/scan'], { queryParams: { barcode: barcode } });
-    this.scanningComplete.emit(barcode);
-  }
-  
-  selectedDevice: MediaDeviceInfo | undefined;
-
-  onCamerasFound(devices: MediaDeviceInfo[]) {
-    const rearCamera = devices.find(device => /back|rear|environment/i.test(device.label));
-    if (rearCamera) {
-      this.selectedDevice = rearCamera;
-    } else {
-      this.selectedDevice = devices[0]; // fallback
-    }
+  startScanning() {
+    this.barcodeScanner.start();
   }
 
-  onPermissionResponse(permission: boolean) {
-    console.log('Camera permission granted?', permission);
-    if (!permission) {
-      alert('Camera permission was denied.');
-    }
+  stopScanning() {
+    this.barcodeScanner.stop();
+  }
+
+  onValueChanges(result: any) {
+    this.barcodeValue = result.codeResult.code;
+    alert(this.barcodeValue);
+
+    this.scanningComplete.emit(this.barcodeValue);
   }
 }
