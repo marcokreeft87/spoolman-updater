@@ -35,7 +35,11 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 var app = builder.Build();
-    
+
+// Configure Kestrel to listen on HTTPS
+app.UseHttpsRedirection();  // Optional: this forces HTTP to redirect to HTTPS
+app.UseHsts(); // Enable HTTP Strict Transport Security
+
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
