@@ -1,9 +1,11 @@
-﻿using System.Net.Http.Json;
+﻿using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
 
 namespace Gateways;
 
 public class HomeAssistantClient
 {
+    private readonly ILogger<HomeAssistantClient> logger;
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
     private readonly string _token;
@@ -16,11 +18,14 @@ public class HomeAssistantClient
 
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token}");
+
         this.configuration = configuration;
     }
 
     public async Task<List<AMSEntity>> GetAmsInfoAsync()
     {
+        logger.LogInformation($"Getting AMS info from {configuration.AMSEntities}...");
+
         var amsEntities = new List<AMSEntity>();
         foreach(var amsEntity in configuration.AMSEntities)
         {
@@ -33,8 +38,10 @@ public class HomeAssistantClient
             };
 
             amsEntities.Add(amsEntityInfo);
-        }  
-        
+        }
+
+        logger.LogInformation($"AMS info retrieved: {amsEntities.Count} entities.");
+
         return amsEntities;
     }
 
@@ -42,9 +49,19 @@ public class HomeAssistantClient
 
     private async Task<TrayInfo?> GetTrayInfoAsync(string entity)
     {
-        var response = await _httpClient.GetFromJsonAsync<HomeAssistantState>($"{_baseUrl}/api/states/{entity}");
+        logger.LogInformation($"Getting tray info for entity: {entity}...");
 
-        var trayInfo = response?.Attributes;
+        var response = await _httpClient.GetAsync($"{_baseUrl}/api/states/{entity}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogError($"Failed to get tray info for entity: {entity}. Status code: {response.StatusCode}");
+            return null;
+        }
+
+        var entityResponse = await response.Content.ReadFromJsonAsync<HomeAssistantState>();
+
+        var trayInfo = entityResponse?.Attributes;
 
         trayInfo.Id = entity.Replace("sensor.", string.Empty);
 

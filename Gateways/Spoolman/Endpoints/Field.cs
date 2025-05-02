@@ -1,8 +1,8 @@
-﻿using System.Net.Http.Json;
-
+﻿using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
 namespace Gateways;
 
-internal class FieldSpoolmanEndpoint(SpoolmanConfiguration configuration) : SpoolmanEndpoint<Field>(configuration), IFieldEndpoint
+internal class FieldSpoolmanEndpoint(SpoolmanConfiguration configuration, ILogger<SpoolmanEndpoint<Field>> logger) : SpoolmanEndpoint<Field>(configuration, logger), IFieldEndpoint
 {
     private EntityType FieldType { get; set; } = EntityType.Spool;
 

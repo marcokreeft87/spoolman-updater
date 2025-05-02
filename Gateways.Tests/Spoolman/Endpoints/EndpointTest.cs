@@ -1,4 +1,6 @@
-﻿using RichardSzalay.MockHttp;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using RichardSzalay.MockHttp;
 using System.Reflection;
 
 namespace Gateways.Tests
@@ -24,7 +26,10 @@ namespace Gateways.Tests
             var constructorArguments = new object[] { new SpoolmanConfiguration() { Url = "http://localhost:8080" } };
 
             if (ConstructorArguments?.Length > 0)
-                constructorArguments = constructorArguments.Concat(ConstructorArguments).ToArray();
+                constructorArguments = [.. constructorArguments, .. ConstructorArguments];
+
+            // Add a logger to the constructor arguments
+            constructorArguments = [.. constructorArguments, new Mock<ILogger<TSpoolmanEndpoint>>().Object ];
 
             var types = constructorArguments.Select(argument => argument.GetType()).ToArray();
 
