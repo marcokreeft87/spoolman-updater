@@ -65,16 +65,16 @@ APPLICATION__SPOOLMAN__URL=http://spoolman.local
 {
   "Application": {
     "HomeAssistant": {
-      "Url": "http://192.168.2.4:8123",
+      "Url": "<HA_URL>",
       "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZGYzNGE2MmIyMTI0YmI3OTI0OTVjM2VmMTFlYWI5ZiIsImlhdCI6MTc0MTc5OTQwMCwiZXhwIjoyMDU3MTU5NDAwfQ.MG_gLT4NBkMrvCNavgk1fB3rXN9mu9RptGOsgzyBIT4",
       "AMSEntities": [
-        "X1C_00M09C422100420_AMS_1"
+        "X1C_AMS_1"
       ],
       "ExternalSpoolEntity": "sensor.x1x_externalspool_external_spool"
     },
     "Spoolman": {
-      "Url": "http://192.168.2.186:7912",
-      "PrinterId": "00M09C422100420"
+      "Url": "<SPOOLMANURL>",
+      "PrinterId": "<PRINTERID>"
     }
   }
 }
