@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿namespace Gateways;
 
-namespace Gateways;
-
-internal class FilamentSpoolManEndpoint(SpoolmanConfiguration configuration, ILogger<SpoolmanEndpoint<Filament>> logger) : SpoolmanEndpoint<Filament>(configuration, logger), IFilamentEndpoint
+internal class FilamentSpoolManEndpoint(SpoolmanConfiguration configuration) : SpoolmanEndpoint<Filament>(configuration), IFilamentEndpoint
 {
     protected override string Endpoint => "filament";
 

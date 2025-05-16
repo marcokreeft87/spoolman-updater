@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using RichardSzalay.MockHttp;
 using System.Text.Json;
@@ -108,7 +107,7 @@ namespace Gateways.Tests
             ConstructorArguments = new object[]
             {
                 vendorEndpoint.Object,
-                filamentEndpoint.Object
+                filamentEndpoint.Object,
             };
         }
     }

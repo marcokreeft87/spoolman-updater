@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿namespace Gateways;
 
-namespace Gateways;
-
-internal class VendorSpoolmanEndpoint(SpoolmanConfiguration configuration, ILogger<SpoolmanEndpoint<Vendor>> logger) : SpoolmanEndpoint<Vendor>(configuration, logger), IVendorEndpoint
+internal class VendorSpoolmanEndpoint(SpoolmanConfiguration configuration) : SpoolmanEndpoint<Vendor>(configuration), IVendorEndpoint
 {
     protected override string Endpoint => "vendor";
 

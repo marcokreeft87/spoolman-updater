@@ -1,5 +1,4 @@
 ﻿using LinqKit;
-using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -7,15 +6,16 @@ namespace Gateways;
 
 internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 {
+    private readonly SpoolmanConfiguration configuration;
     private readonly IVendorEndpoint vendorEndpoint;
     private readonly IFilamentEndpoint filamentEndpoint;
 
     public SpoolSpoolmanEndpoint(
         SpoolmanConfiguration configuration,
         IVendorEndpoint vendorEndpoint,
-        IFilamentEndpoint filamentEndpoint, 
-        ILogger<SpoolmanEndpoint<Spool>> logger) : base(configuration, logger)
+        IFilamentEndpoint filamentEndpoint) : base(configuration)
     {
+        this.configuration = configuration;
         this.vendorEndpoint = vendorEndpoint;
         this.filamentEndpoint = filamentEndpoint;
     }
