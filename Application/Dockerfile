@@ -1,21 +1,16 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Use a build argument to determine the architecture (defaults to amd64)
+ARG TARGETARCH=amd64
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# Base image for running the app
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-$TARGETARCH AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-# This stage is used to build the Angular app
+# Build the Angular app
 FROM node:20-slim AS angular-build
 WORKDIR /src
-
-# Copy package.json and package-lock.json first to leverage Docker caching
-#COPY Application/wwwroot/spoolman-updater/package*.json ./wwwroot/spoolman-updater/
-#COPY Application/wwwroot/spoolman-updater/angular.json ./wwwroot/spoolman-updater/
-#COPY Application/wwwroot/spoolman-updater/tsconfig*.json ./wwwroot/spoolman-updater/
-#COPY Application/wwwroot/spoolman-updater/src ./wwwroot/spoolman-updater/src
 
 COPY UI/package*.json ./
 COPY UI/angular.json ./
@@ -26,12 +21,10 @@ RUN npm install
 
 # Build the Angular app
 COPY UI/src ./src
-#RUN npm run build -- --configuration production
 RUN npm run build:prod
 
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Build the .NET application
+FROM mcr.microsoft.com/dotnet/sdk:8.0-$TARGETARCH AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Application/Application.csproj", "Application/"]
@@ -42,12 +35,12 @@ COPY . .
 WORKDIR "/src/Application"
 RUN dotnet build "./Application.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Publish the .NET application
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Application.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# Final image for running the app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
