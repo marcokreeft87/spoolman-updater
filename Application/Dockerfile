@@ -2,7 +2,7 @@
 ARG TARGETARCH=amd64
 
 # Base image for running the app
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-$TARGETARCH AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -24,7 +24,8 @@ COPY UI/src ./src
 RUN npm run build:prod
 
 # Build the .NET application
-FROM mcr.microsoft.com/dotnet/sdk:8.0-$TARGETARCH AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Application/Application.csproj", "Application/"]
