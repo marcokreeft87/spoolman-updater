@@ -1,4 +1,6 @@
-﻿namespace Gateways;
+﻿using System.Text.Json.Serialization;
+
+namespace Gateways;
 
 public class TrayInfo
 {
@@ -13,4 +15,21 @@ public class HomeAssistantState
 {
     public string State { get; set; } = string.Empty;
     public TrayInfo Attributes { get; set; } = new();
+}
+
+
+public class BambuServiceRequest
+{
+    [JsonPropertyName("entity_id")]
+    public string[] EntityId { get; set; }
+    [JsonPropertyName("tray_info_idx")]
+    public string TrayInfoIdx { get; set; }
+    [JsonPropertyName("tray_color")]
+    public string TrayColor { get; set; }
+    [JsonPropertyName("tray_type")]
+    public string TrayType { get; set; }
+    [JsonPropertyName("nozzle_temp_min")]
+    public int NozzleTempMin { get; set; }
+    [JsonPropertyName("nozzle_temp_max")]
+    public int NozzleTempMax { get; set; }
 }
