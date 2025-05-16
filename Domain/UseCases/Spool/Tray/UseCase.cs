@@ -1,9 +1,8 @@
 ﻿using Gateways;
-using System.Text.Json;
 
 namespace Domain;
 
-internal sealed class UpdateTrayUseCase(SpoolmanClient spoolmanClient, HomeAssistantClient homeassistantClient) : IUseCase<UpdateTrayInput>
+internal sealed class UpdateTrayUseCase(SpoolmanClient spoolmanClient, HomeAssistantClient homeassistantClient, IEventBus eventBus) : IUseCase<UpdateTrayInput>
 {
     public async Task<IOutput> ExecuteAsync(UpdateTrayInput input)
     { 
@@ -22,14 +21,7 @@ internal sealed class UpdateTrayUseCase(SpoolmanClient spoolmanClient, HomeAssis
 
         var spool = await spoolmanClient.GetByIdAsync(input.SpoolId);
 
-        var test = await homeassistantClient.SetPrintTraySpool(
-            input.ActiveTrayId,
-            spool.Filament.ColorHex,
-            spool.Filament.Material,
-            spool.Filament.Extra.ContainsKey("type") ? JsonSerializer.Deserialize<string>(spool.Filament.Extra["type"]) : string.Empty,
-            spool.Filament.ExtruderTemp,
-            spool.Filament.ExtruderTemp
-        );
+        await eventBus.RaiseEventAsync(new SpoolUpdatedEvent(spool, input.ActiveTrayId));        
 
         return new UpdateTrayOutput(spool);
     }

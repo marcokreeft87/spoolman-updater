@@ -6,7 +6,6 @@ namespace Gateways;
 
 internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 {
-    private readonly SpoolmanConfiguration configuration;
     private readonly IVendorEndpoint vendorEndpoint;
     private readonly IFilamentEndpoint filamentEndpoint;
 
@@ -15,7 +14,6 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
         IVendorEndpoint vendorEndpoint,
         IFilamentEndpoint filamentEndpoint) : base(configuration)
     {
-        this.configuration = configuration;
         this.vendorEndpoint = vendorEndpoint;
         this.filamentEndpoint = filamentEndpoint;
     }

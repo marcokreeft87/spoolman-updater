@@ -9,7 +9,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDomain(this IServiceCollection services, Assembly domainAssembly = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) =>
         services
             .AddServices(typeof(IUseCase<>), domainAssembly, serviceLifetime)
-            .AddScoped<IInputHandler, InputHandler>();
+            .AddServices(typeof(IEventHandler<>), domainAssembly, serviceLifetime)
+            .AddScoped<IInputHandler, InputHandler>()
+            .AddSingleton<IEventBus, EventBus>();
 
     public static IServiceCollection AddServices(this IServiceCollection services, Type serviceInterfaceType, Assembly scanAssembly = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
     {
@@ -25,6 +27,7 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
 
     public static IServiceCollection AddGateways(this IServiceCollection services, UpdaterConfiguration configuration) =>
         services
