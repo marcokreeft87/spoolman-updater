@@ -1,4 +1,7 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Gateways;
 
@@ -22,7 +25,7 @@ public class HomeAssistantClient
     public async Task<List<AMSEntity>> GetAmsInfoAsync()
     {
         var amsEntities = new List<AMSEntity>();
-        foreach(var amsEntity in configuration.AMSEntities)
+        foreach (var amsEntity in configuration.AMSEntities)
         {
             var trays = await GetAllTrayInfoAsync(amsEntity);
 
@@ -33,8 +36,8 @@ public class HomeAssistantClient
             };
 
             amsEntities.Add(amsEntityInfo);
-        }  
-        
+        }
+
         return amsEntities;
     }
 
@@ -53,13 +56,17 @@ public class HomeAssistantClient
 
     private async Task<List<TrayInfo?>> GetAllTrayInfoAsync(string amsEntity)
     {
-        var trayTasks = new List<Task<TrayInfo?>>
-        {
-            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_1"),
-            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_2"),
-            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_3"),
-            GetTrayInfoAsync($"sensor.{amsEntity.ToLower()}_tray_4")
-        };
+        var allStates = await _httpClient.GetFromJsonAsync<List<HaEntity>>($"{_baseUrl}/api/states");
+
+        var regex = new Regex($@"^sensor\.{amsEntity}_.*_\d+$", RegexOptions.IgnoreCase);
+
+        var sensors = allStates
+            .Where(e => regex.IsMatch(e.EntityId))
+            .ToList();
+
+        var trayTasks = new List<Task<TrayInfo?>>();
+
+        sensors.ForEach(sensor => trayTasks.Add(GetTrayInfoAsync(sensor.EntityId)));
 
         var results = await Task.WhenAll(trayTasks);
 
