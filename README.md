@@ -56,7 +56,7 @@ The API requires the following environment variables to be set:
 ```
 APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local
 APPLICATION__HOMEASSISTANT__TOKEN=your-token
-APPLICATION__HOMEASSISTANT__AMSENTITIES__0=sensor.x1c_ams_1
+APPLICATION__HOMEASSISTANT__AMSENTITIES__0=x1c_ams_1
 APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool
 APPLICATION__SPOOLMAN__URL=http://spoolman.local
 
@@ -66,7 +66,7 @@ APPLICATION__SPOOLMAN__URL=http://spoolman.local
   "Application": {
     "HomeAssistant": {
       "Url": "<HA_URL>",
-      "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZGYzNGE2MmIyMTI0YmI3OTI0OTVjM2VmMTFlYWI5ZiIsImlhdCI6MTc0MTc5OTQwMCwiZXhwIjoyMDU3MTU5NDAwfQ.MG_gLT4NBkMrvCNavgk1fB3rXN9mu9RptGOsgzyBIT4",
+      "Token": xxxxx
       "AMSEntities": [
         "X1C_AMS_1"
       ],
@@ -96,7 +96,7 @@ docker run -d -p 8088:8080 \
   -e APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local \
   -e APPLICATION__HOMEASSISTANT__TOKEN=your-token \
   -e APPLICATION__SPOOLMAN__URL=http://spoolman.local \
-  -e APPLICATION__HOMEASSISTANT__AMSENTITIES__)=sensor.x1c_ams_1 \
+  -e APPLICATION__HOMEASSISTANT__AMSENTITIES__0=x1c_ams_1 \
   -e APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool \
   --name spoolman-updater spoolman-updater
 ```
