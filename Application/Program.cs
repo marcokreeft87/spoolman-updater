@@ -22,12 +22,17 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.custom.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
 var configuration = builder.Configuration.GetSection("Application").Get<UpdaterConfiguration>();
 
 builder.Services
     .AddDomain()
-    .AddGateways(configuration);
+    .AddGateways(configuration)
+    .AddSingleton(configuration);
 
 builder.Services.Configure<JsonOptions>(options =>
 {

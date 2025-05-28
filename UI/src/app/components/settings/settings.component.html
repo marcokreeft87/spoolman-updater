@@ -1,0 +1,50 @@
+<mat-card class="mat-elevation-z2">
+  <form [formGroup]="form" (ngSubmit)="save()" class="form-container">
+
+    <mat-form-field>
+  <mat-label>Input</mat-label>
+  <input matInput>
+</mat-form-field>
+<!-- <mat-form-field>
+  <mat-label>Select</mat-label>
+  <mat-select>
+    <mat-option value="one">First option</mat-option>
+    <mat-option value="two">Second option</mat-option>
+  </mat-select>
+</mat-form-field> -->
+<mat-form-field>
+  <mat-label>Textarea</mat-label>
+  <textarea matInput></textarea>
+</mat-form-field>
+
+    <!-- <mat-card-title>Home Assistant Settings</mat-card-title>
+    <div formGroupName="home_assistant">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>URL</mat-label>
+        <input matInput formControlName="url" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Token</mat-label>
+        <input matInput formControlName="token" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>External Spool Entity</mat-label>
+        <input matInput formControlName="external_spool_entity" />
+      </mat-form-field>
+
+      <label class="mt">AMS Entities</label>
+      <div formArrayName="ams_entities" class="ams-list">
+      
+      </div>
+      <button mat-raised-button color="primary" type="button" (click)="addEntity()">
+        <mat-icon>add</mat-icon> Add AMS Entity
+      </button>
+    </div> -->
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit">Save</button>
+    </div>
+  </form>
+</mat-card>

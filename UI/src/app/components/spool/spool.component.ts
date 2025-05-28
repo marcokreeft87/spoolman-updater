@@ -1,17 +1,12 @@
-import { Component, Host, HostBinding, ViewEncapsulation } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
+import { AsyncPipe } from '@angular/common';
+import { Component, HostBinding, ViewEncapsulation } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { HttpClientModule } from '@angular/common/http';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { BehaviorSubject, forkJoin } from 'rxjs';
+import { TrayComponent } from '../../shared/components/tray/tray.component';
+import { Spool } from '../../shared/models/spool';
+import { AMSEntity, Tray } from '../../shared/models/tray';
 import { SpoolsService } from '../../shared/service/spoolman.service';
 import { TrayService } from '../../shared/service/tray.service';
-import { AMSEntity, Tray } from '../../shared/models/tray';
-import { Spool } from '../../shared/models/spool';
-import { TrayComponent } from '../../shared/components/tray/tray.component';
-import { BehaviorSubject, forkJoin, Subject } from 'rxjs';
 
 @Component({
   selector: 'spool-component',

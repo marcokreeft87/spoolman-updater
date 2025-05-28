@@ -4,6 +4,10 @@
   <button mat-icon-button (click)="openScanner()">
     <mat-icon>photo_camera</mat-icon>
   </button>
+
+  <button mat-icon-button routerLink="/settings">
+    <mat-icon>settings</mat-icon>
+  </button>
 </mat-toolbar>
 
 <div [hidden]="!scanning">
