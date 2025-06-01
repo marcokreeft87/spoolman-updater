@@ -117,7 +117,7 @@ This automation ensures that the filament usage is automatically updated in Spoo
 
 ### Setting the active tray in the UI when switching spools
 When you switch your spool in the AMS, you will need to tell spoolman which tray the new spool is in. You can do this in the UI of Spoolman updater.
-Just go to the base of the URL of the API. So for example if your API url is http://192.168.2.186:8088/spools you go to http://192.168.2.186:8088/
+Just go to the base of the URL of the API. So for example if your API url is http://192.168.1.1:8088/spools you go to http://192.168.1.1:8088/
 
 ![alt text](image.png)
 
