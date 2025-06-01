@@ -15,106 +15,32 @@ To facilitate API development and testing, the Spoolman Updater API utilizes Swa
 http://<your-server>:8088
 ```
 
-## Endpoints
-
-### 1. Update Spool
-
-#### **Endpoint:**
-
-```
-POST /spool
-```
-
-#### **Description:**
-
-Updates the spool details based on filament usage.
-
-#### **Request Body:**
-
-```json
-{
-  "name": "Bambu PLA Basic",
-  "material": "PLA",
-  "tagUid": "0000000000000000",
-  "usedWeight": 10,
-  "color": "#FFFFFFFF",
-  "activeTrayId": "tray1"
-}
-```
-
-#### **Response:**
-
-- **200 OK**: Successfully updated spool.
-- **400 Bad Request**: Missing required fields.
-
----
-
 ## Environment Variables
 
 The API requires the following environment variables to be set:
 
-```
-APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local
-APPLICATION__HOMEASSISTANT__TOKEN=your-token
-APPLICATION__HOMEASSISTANT__AMSENTITIES__0=x1c_ams_1
-APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool
-APPLICATION__SPOOLMAN__URL=http://spoolman.local
 
-
-
-{
-  "Application": {
-    "HomeAssistant": {
-      "Url": "<HA_URL>",
-      "Token": xxxxx
-      "AMSEntities": [
-        "X1C_AMS_1"
-      ],
-      "ExternalSpoolEntity": "sensor.x1x_externalspool_external_spool"
-    },
-    "Spoolman": {
-      "Url": "<SPOOLMANURL>",
-      "PrinterId": "<PRINTERID>"
-    }
-  }
-}
-
-```
+| Variable Name                                | Type          | Example                             | Description                                      |
+| -----------------                            | ------------- | ----------------------------------- | ------------------------------------------------ |
+| APPLICATION__HOMEASSISTANT__URL              | string        | https://192.169.1.1:8123            | The URL to Home Assistant, with portnumber       |
+| APPLICATION__HOMEASSISTANT__TOKEN            | string        |                                     | The Home Assistant Long-lived access token [more info](https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159/5?u=marcokreeft87)       |
+| APPLICATION__HOMEASSISTANT__AMSENTITIES__0   | string        | X1C_00xxxxxxxxxxxxx_AMS_1           | The Device ID of your AMS, when there are multiples AMS in your configuration just add another var and replace the _0 with _1 and so on       |
+| APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL | string        | sensor.x1x_externalspool_external_spool | The URL to Home Assistant, with portnumber       |
+| APPLICATION__SPOOLMAN__URL                   | string        | https://192.169.1.1:7912             | The URL to Spoolman, with portnumber       |
 
 ## Running with Docker
-
-### **Build the Docker image**
-
-```
-docker build -t spoolman-updater .
-```
 
 ### **Run the container**
 
 ```
 docker run -d -p 8088:8080 \
-  -e APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local \
+  -e APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local:8123 \
   -e APPLICATION__HOMEASSISTANT__TOKEN=your-token \
-  -e APPLICATION__SPOOLMAN__URL=http://spoolman.local \
+  -e APPLICATION__SPOOLMAN__URL=http://spoolman.local:7912 \
   -e APPLICATION__HOMEASSISTANT__AMSENTITIES__0=x1c_ams_1 \
   -e APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool \
   --name spoolman-updater spoolman-updater
 ```
-
-## Logging
-
-The API logs requests and responses using the default ASP.NET logging system. You can configure logging levels in `appsettings.json`:
-
-```json
-"Logging": {
-  "LogLevel": {
-    "Default": "Information",
-    "Microsoft.AspNetCore": "Warning"
-  }
-}
-```
-
----
 
 ## Using with Home Assistant
 The Spoolman Updater API can be integrated into Home Assistant automations to track filament usage automatically.
