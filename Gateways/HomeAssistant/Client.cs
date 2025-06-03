@@ -25,17 +25,44 @@ public class HomeAssistantClient
     public async Task<List<AMSEntity>> GetAmsInfoAsync()
     {
         var amsEntities = new List<AMSEntity>();
-        foreach (var amsEntity in configuration.AMSEntities)
+
+        if (configuration.AMSEntities != null && configuration.AMSEntities.Any())
         {
-            var trays = await GetAllTrayInfoAsync(amsEntity);
-
-            var amsEntityInfo = new AMSEntity
+            foreach (var amsEntity in configuration.AMSEntities)
             {
-                Id = amsEntity,
-                Trays = trays
-            };
+                var trays = await GetAllTrayInfoAsync(amsEntity);
 
-            amsEntities.Add(amsEntityInfo);
+                var amsEntityInfo = new AMSEntity
+                {
+                    Id = amsEntity,
+                    Trays = trays
+                };
+
+                amsEntities.Add(amsEntityInfo);
+            }
+        }
+        else if (configuration.AMSEntities != null && configuration.TrayEntities.Any())
+        {
+            var groupedByAms = configuration.TrayEntities
+                .GroupBy(entity =>
+                {
+                    var match = Regex.Match(entity, @"ams_(\d+)");
+                    return match.Success ? $"AMS {match.Groups[1].Value}" : "Unknown";
+                });
+
+            foreach (var group in groupedByAms)
+            {
+                var trayTasks = group.Select(entity => GetTrayInfoAsync(entity)).ToList();
+                var trays = await Task.WhenAll(trayTasks);
+
+                var amsEntityInfo = new AMSEntity
+                {
+                    Id = group.Key,
+                    Trays = trays.Where(tray => tray != null).ToList()
+                };
+
+                amsEntities.Add(amsEntityInfo);
+            }
         }
 
         return amsEntities;

@@ -19,14 +19,14 @@ http://<your-server>:8088
 
 The API requires the following environment variables to be set:
 
-
 | Variable Name                                | Type          | Example                             | Description                                      |
 | -----------------                            | ------------- | ----------------------------------- | ------------------------------------------------ |
-| APPLICATION__HOMEASSISTANT__URL              | string        | https://192.169.1.1:8123            | The URL to Home Assistant, with portnumber       |
+| APPLICATION__HOMEASSISTANT__URL              | string        | <https://192.169.1.1:8123>            | The URL to Home Assistant, with portnumber       |
 | APPLICATION__HOMEASSISTANT__TOKEN            | string        |                                     | The Home Assistant Long-lived access token [more info](https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159/5?u=marcokreeft87)       |
-| APPLICATION__HOMEASSISTANT__AMSENTITIES__0   | string        | X1C_00xxxxxxxxxxxxx_AMS_1           | The Device ID of your AMS, when there are multiples AMS in your configuration just add another var and replace the _0 with _1 and so on       |
+| APPLICATION__HOMEASSISTANT__AMSENTITIES__0   | string        | X1C_00xxxxxxxxxxxxx_AMS_1           | The Device ID of your AMS, when there are multiples AMS in your configuration just add another var and replace the _0 with_1 and so on       |
+| APPLICATION__HOMEASSISTANT__TRAYENTITIES__0   | string        | X1C_00xxxxxxxxxxxxx_AMS_1_tray_1          | The tray sensors of your AMS trays. If you want to use this, remove APPLICATION__HOMEASSISTANT__AMSENTITIES or leave empty. Same as in AMSENTITIES replace __0 with 1 and so on for more tray sensors    |
 | APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL | string        | sensor.x1x_externalspool_external_spool | The URL to Home Assistant, with portnumber       |
-| APPLICATION__SPOOLMAN__URL                   | string        | https://192.169.1.1:7912             | The URL to Spoolman, with portnumber       |
+| APPLICATION__SPOOLMAN__URL                   | string        | <https://192.169.1.1:7912>             | The URL to Spoolman, with portnumber       |
 
 ## Running with Docker
 
@@ -42,10 +42,27 @@ docker run -d -p 8088:8080 \
   --name spoolman-updater spoolman-updater
 ```
 
+or
+
+```
+docker run -d -p 8088:8080 \
+  -e APPLICATION__HOMEASSISTANT__URL=http://homeassistant.local:8123 \
+  -e APPLICATION__HOMEASSISTANT__TOKEN=your-token \
+  -e APPLICATION__SPOOLMAN__URL=http://spoolman.local:7912 \
+  -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__0=sensor.x1c_ams_1_tray_1 \
+  -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__1=sensor.x1c_ams_1_tray_2 \
+  -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__2=sensor.x1c_ams_1_tray_3 \
+  -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__3=sensor.x1c_ams_1_tray_4 \
+  -e APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool \
+  --name spoolman-updater spoolman-updater
+```
+
 ## Using with Home Assistant
+
 The Spoolman Updater API can be integrated into Home Assistant automations to track filament usage automatically.
 
 ### **1. Define a REST Command in `configuration.yaml`**
+
 Add the following to your `configuration.yaml` to create a REST command that updates the spool:
 
 ```yaml
@@ -67,6 +84,7 @@ rest_command:
 ```
 
 ### **2. Create an Automation**
+
 The following automation updates the spool when a print finishes or when the AMS tray switches:
 
 ```yaml
@@ -116,12 +134,13 @@ This automation ensures that the filament usage is automatically updated in Spoo
 ---
 
 ### Setting the active tray in the UI when switching spools
+
 When you switch your spool in the AMS, you will need to tell spoolman which tray the new spool is in. You can do this in the UI of Spoolman updater.
-Just go to the base of the URL of the API. So for example if your API url is http://192.168.1.1:8088/spools you go to http://192.168.1.1:8088/
+Just go to the base of the URL of the API. So for example if your API url is <http://192.168.1.1:8088/spools> you go to <http://192.168.1.1:8088/>
 
 ![alt text](image.png)
 
-Here you can set which spool is in which tray. 
+Here you can set which spool is in which tray.
 
 ## Contributing
 
@@ -134,4 +153,3 @@ Pull requests are welcome! Please follow the standard GitHub workflow:
 ## License
 
 MIT License. See `LICENSE` file for details.
-
