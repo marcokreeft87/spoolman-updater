@@ -82,8 +82,30 @@ rest_command:
         "active_tray_id": "{{ filament_active_tray_id }}"
       }
 ```
+### **2. Create the sensors**
 
-### **2. Create an Automation**
+```yaml
+utility_meter:
+  bambulab_filament_usage_meter:
+    unique_id: 148d1e2d-87b2-4883-a923-a36a2c9fa0ac
+    source: sensor.bambulab_filament_usage
+    cycle: weekly
+
+```
+and 
+
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      bambulab_filament_usage:
+        unique_id: b954300e-d3a2-44ab-948f-39c30b2f0c00
+        friendly_name: "Bambu Lab Filament Usage"
+        value_template: "{{ states('sensor.bambu_lab_p1s_gewicht_van_print') | float(0) / 100 * states('sensor.bambu_lab_p1s_printvoortgang') | float(0) }}"
+        availability_template: "{% if is_state('sensor.bambu_lab_p1s_gewicht_van_print', 'unknown') or is_state('sensor.bambu_lab_p1s_gewicht_van_print', 'unavailable') %} false {% else %} true {%- endif %}"
+```
+
+### **3. Create an Automation**
 
 The following automation updates the spool when a print finishes or when the AMS tray switches:
 
