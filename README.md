@@ -105,6 +105,8 @@ sensor:
         availability_template: "{% if is_state('sensor.bambu_lab_p1s_gewicht_van_print', 'unknown') or is_state('sensor.bambu_lab_p1s_gewicht_van_print', 'unavailable') %} false {% else %} true {%- endif %}"
 ```
 
+Don't forget to change the sensor ids to your own :)
+
 ### **3. Create an Automation**
 
 The following automation updates the spool when a print finishes or when the AMS tray switches:
