@@ -74,11 +74,11 @@ rest_command:
       Content-Type: "application/json"
     payload: >
       {
-        "name": "{{ name }}",
-        "material": "{{ material }}",
-        "tag_uid": "{{ tag_uid }}",
-        "used_weight": {{ used_weight }},
-        "color": "{{ color }}",
+        "name": "{{ filament_name }}",
+        "material": "{{ filament_material }}",
+        "tag_uid": "{{ filament_tag_uid }}",
+        "used_weight": {{ filament_used_weight | int }},
+        "color": "{{ filament_color }}",
         "active_tray_id": "{{ filament_active_tray_id }}"
       }
 ```
