@@ -25,7 +25,7 @@ The API requires the following environment variables to be set:
 | APPLICATION__HOMEASSISTANT__TOKEN            | string        |                                     | The Home Assistant Long-lived access token [more info](https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159/5?u=marcokreeft87)       |
 | APPLICATION__HOMEASSISTANT__AMSENTITIES__0   | string        | X1C_00xxxxxxxxxxxxx_AMS_1           | The Device ID of your AMS, when there are multiples AMS in your configuration just add another var and replace the _0 with_1 and so on       |
 | APPLICATION__HOMEASSISTANT__TRAYENTITIES__0   | string        | X1C_00xxxxxxxxxxxxx_AMS_1_tray_1          | The tray sensors of your AMS trays. If you want to use this, remove APPLICATION__HOMEASSISTANT__AMSENTITIES or leave empty. Same as in AMSENTITIES replace __0 with 1 and so on for more tray sensors    |
-| APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL | string        | sensor.x1x_externalspool_external_spool | The URL to Home Assistant, with portnumber       |
+| APPLICATION__HOMEASSISTANT__EXTERNALSPOOLENTITY | string        | sensor.x1x_externalspool_external_spool | The URL to Home Assistant, with portnumber       |
 | APPLICATION__SPOOLMAN__URL                   | string        | <https://192.169.1.1:7912>             | The URL to Spoolman, with portnumber       |
 
 ## Running with Docker
@@ -38,7 +38,7 @@ docker run -d -p 8088:8080 \
   -e APPLICATION__HOMEASSISTANT__TOKEN=your-token \
   -e APPLICATION__SPOOLMAN__URL=http://spoolman.local:7912 \
   -e APPLICATION__HOMEASSISTANT__AMSENTITIES__0=x1c_ams_1 \
-  -e APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool \
+  -e APPLICATION__HOMEASSISTANT__EXTERNALSPOOLENTITY=sensor.x1c_external_spool \
   --name spoolman-updater spoolman-updater
 ```
 
@@ -53,7 +53,7 @@ docker run -d -p 8088:8080 \
   -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__1=sensor.x1c_ams_1_tray_2 \
   -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__2=sensor.x1c_ams_1_tray_3 \
   -e APPLICATION__HOMEASSISTANT__TRAYENTITIES__3=sensor.x1c_ams_1_tray_4 \
-  -e APPLICATION__HOMEASSISTANT__AMSEXTERNALSPOOL=sensor.x1c_external_spool \
+  -e APPLICATION__HOMEASSISTANT__EXTERNALSPOOLENTITY=sensor.x1c_external_spool \
   --name spoolman-updater spoolman-updater
 ```
 
@@ -74,16 +74,40 @@ rest_command:
       Content-Type: "application/json"
     payload: >
       {
-        "name": "{{ name }}",
-        "material": "{{ material }}",
-        "tag_uid": "{{ tag_uid }}",
-        "used_weight": {{ used_weight }},
-        "color": "{{ color }}",
+        "name": "{{ filament_name }}",
+        "material": "{{ filament_material }}",
+        "tag_uid": "{{ filament_tag_uid }}",
+        "used_weight": {{ filament_used_weight | int }},
+        "color": "{{ filament_color }}",
         "active_tray_id": "{{ filament_active_tray_id }}"
       }
 ```
+### **2. Create the sensors**
 
-### **2. Create an Automation**
+```yaml
+utility_meter:
+  bambulab_filament_usage_meter:
+    unique_id: 148d1e2d-87b2-4883-a923-a36a2c9fa0ac
+    source: sensor.bambulab_filament_usage
+    cycle: weekly
+
+```
+and 
+
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      bambulab_filament_usage:
+        unique_id: b954300e-d3a2-44ab-948f-39c30b2f0c00
+        friendly_name: "Bambu Lab Filament Usage"
+        value_template: "{{ states('sensor.bambu_lab_p1s_gewicht_van_print') | float(0) / 100 * states('sensor.bambu_lab_p1s_printvoortgang') | float(0) }}"
+        availability_template: "{% if is_state('sensor.bambu_lab_p1s_gewicht_van_print', 'unknown') or is_state('sensor.bambu_lab_p1s_gewicht_van_print', 'unavailable') %} false {% else %} true {%- endif %}"
+```
+
+Don't forget to change the sensor ids to your own :)
+
+### **3. Create an Automation**
 
 The following automation updates the spool when a print finishes or when the AMS tray switches:
 
