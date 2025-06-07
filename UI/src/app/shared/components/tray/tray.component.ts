@@ -1,11 +1,15 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { Tray } from '../../models/tray';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { map, Observable, startWith } from 'rxjs';
 import { Spool } from '../../models/spool';
+import { Tray } from '../../models/tray';
 import { SpoolsService } from '../../service/spoolman.service';
 import { SpoolItemComponent } from "../spool/spool.component";
 
@@ -18,6 +22,12 @@ import { SpoolItemComponent } from "../spool/spool.component";
     MatSelectModule,
     MatFormFieldModule,
     CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    AsyncPipe,
     SpoolItemComponent
 ],
   templateUrl: './tray.component.html',
@@ -29,11 +39,24 @@ export class TrayComponent implements OnInit {
   @Input() name: string = '';
 
   currentSpool: Spool | undefined;
+  filteredSpools: Observable<Spool[]> = new Observable<Spool[]>();
+   spoolControl = new FormControl('');
 
   constructor(private spoolService: SpoolsService) { }
 
   ngOnInit(): void {
     this.currentSpool = this.getCurrentSpool(this.tray);
+
+    this.filteredSpools = this.spoolControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filter(value || '')),
+    );
+  }
+
+  filter(value: string | Spool): Spool[] {
+    const filterValue = typeof value !== 'string' ? this.displaySpoolName(value as Spool) : value.toString().toLowerCase();
+
+    return this.spools.filter(option => this.displaySpoolName(option).toLowerCase().includes(filterValue));
   }
 
   displaySpoolName(spool: Spool): string {
@@ -54,9 +77,10 @@ export class TrayComponent implements OnInit {
     return currentSpool;
   }
 
-  onSpoolChange(selectChange: MatSelectChange, tray: Tray): void {
-    const selectedSpoolId = selectChange.value;
+  onSpoolChange(selectChange: MatAutocompleteSelectedEvent, tray: Tray): void {
+    const selectedSpoolId = selectChange.option.value.id;
 
+    console.log(selectedSpoolId, tray);
     this.setSpoolToTray(selectedSpoolId, tray);
   }
 
@@ -76,7 +100,7 @@ export class TrayComponent implements OnInit {
         console.log('Tray updated successfully!');
 
         this.currentSpool = spool;
-        console.log('Current spool:', spool);
+        this.spoolControl.setValue(null);
       });
   }
 }

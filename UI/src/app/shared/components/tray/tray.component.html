@@ -9,7 +9,31 @@
 
       <mat-form-field *ngIf="spools.length > 0 && tray">
         <mat-label>Select a spool</mat-label>
-        <mat-select
+
+         <input type="text"
+           placeholder="Pick one"
+           aria-label="Number"
+           matInput
+           [formControl]="spoolControl"
+           [matAutocomplete]="auto">
+
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSpoolChange($event, tray)" [displayWith]="displaySpoolName">
+            @for (spool of filteredSpools | async; track spool) {
+              <mat-option [value]="spool">
+                <div class="spool-option">
+                  <div
+                    class="spool-color"
+                    [style.background-color]="'#' + spool.filament.color_hex"
+                  ></div>
+                  <div>{{ displaySpoolName(spool) }}</div>
+                </div>
+              </mat-option>
+            }
+          </mat-autocomplete>
+
+
+
+        <!-- <mat-select
           [(value)]="tray.selectedSpool"
           (selectionChange)="onSpoolChange($event, tray)"
         >
@@ -24,7 +48,7 @@
             </div>
           </mat-option>
           }
-        </mat-select>
+        </mat-select> -->
       </mat-form-field>
     </div>
   </mat-card-content>
