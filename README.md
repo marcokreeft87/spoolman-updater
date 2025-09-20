@@ -9,6 +9,8 @@ To facilitate API development and testing, the Spoolman Updater API utilizes Swa
 > [!TIP]
 > The new UI add abilities to set which spool is in which tray of the AMS. Also there is a scan button (top right) that allows you to scan a barcode/qrcode on a spool and that will lead to a page where you can set in which tray the spool is.
 
+## PLEASE READ ALL THE INSTRUCTIONS, THERE IS A DIFFERENCE BASED ON THE VERSION OF YOUR BAMBU LAB HA INTEGRATION
+
 ## Base URL
 
 ```
