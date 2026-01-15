@@ -19,6 +19,7 @@ export interface Spool {
     comment: string | null;
     archived: boolean;
     extra: Record<string, string>;
+    barcode?: string | null;
   }
   
   

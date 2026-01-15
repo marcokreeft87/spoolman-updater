@@ -22,20 +22,6 @@ internal class SpoolSpoolmanEndpoint : SpoolmanEndpoint<Spool>, ISpoolEndpoint
 
     public async Task<List<Spool>> GetAllAsync() => await GetAllAsync(string.Empty, false);
 
-    public async Task<List<Spool>> GetSpoolsByBarcode(string barcode)
-    {
-        var allSpools = await GetAllAsync(string.Empty, false);
-
-        return allSpools?.Where(GetExtraFieldPredicate("barcode", barcode)).ToList() ?? new List<Spool>();
-    }
-
-    private Func<Spool, bool> GetExtraFieldPredicate(string key, string value)
-    {
-        var jsonEncoded = JsonSerializer.Serialize(value, JsonOptions);
-
-        return spool => spool.Extra.ContainsKey(key) && spool.Extra[key] == jsonEncoded;
-    }
-
     public async Task<List<Spool>> GetCurrentSpoolsInTray(string trayId)
     {
         var jsonEncoded = JsonSerializer.Serialize(trayId, JsonOptions);

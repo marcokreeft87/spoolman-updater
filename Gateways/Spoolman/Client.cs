@@ -6,9 +6,6 @@ public class SpoolmanClient(IHealthEndpoint healthEndpoint, ISpoolEndpoint spool
 {
     public async Task<List<Spool>> GetAllAsync() => await spoolEndpoint.GetAllAsync();
 
-    public async Task<List<Spool>> GetByBarcodeAsync(string barcode) =>
-        await spoolEndpoint.GetSpoolsByBarcode(barcode);
-
     public async Task<bool> UseSpoolWeightAsync(int spoolId, float usedWeight) =>
         await spoolEndpoint.UseSpoolWeight(spoolId, usedWeight);
 

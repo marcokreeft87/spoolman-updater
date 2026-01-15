@@ -12,4 +12,5 @@
   </div>
 
   <span>Remaining: {{ spool.remaining_weight }}g</span>
+  <span *ngIf="showSpoolIds" class="spool-id">Spool ID: #{{ spool.id }}</span>
 </ng-container>

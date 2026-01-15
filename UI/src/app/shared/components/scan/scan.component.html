@@ -1,11 +1,10 @@
 <div *ngIf="backCameras.length > 1" class="camera-selector">
-    <label>Select Camera:</label>
-    <select (change)="onCameraChange($event)">
-      <option *ngFor="let camera of backCameras" [value]="camera.deviceId">
-        {{ camera.label || 'Camera' }}
-      </option>
-    </select>
-  </div>
-  
+  <label>Select Camera:</label>
+  <select (change)="onCameraChange($event)">
+    <option *ngFor="let camera of backCameras" [value]="camera.deviceId">
+      {{ camera.label || 'Camera' }}
+    </option>
+  </select>
+</div>
 
-<ngx-scanner-qrcode #action="scanner" (event)="onScanSuccess($event)" (scanSuccess)="onScanSuccess($event)"></ngx-scanner-qrcode>
+<ngx-scanner-qrcode #action="scanner" [config]="scannerConfig" (event)="onScanSuccess($event)"></ngx-scanner-qrcode>

@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { Spool } from '../../models/spool';
+import { SettingsService } from '../../service/settings.service';
 
 @Component({
   selector: 'app-spool-item',
@@ -11,8 +13,26 @@ import { Spool } from '../../models/spool';
   templateUrl: './spool.component.html',
   styleUrls: ['./spool.component.scss'],
 })
-export class SpoolItemComponent {
+export class SpoolItemComponent implements OnInit, OnDestroy {
   @Input() spool: Spool | undefined;
+  showSpoolIds = false;
+
+  private destroy$ = new Subject<void>();
+
+  constructor(private settingsService: SettingsService) {}
+
+  ngOnInit(): void {
+    this.settingsService.settings$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(settings => {
+        this.showSpoolIds = settings.showSpoolIds;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   getTextColor(hexColor: string): string {
     if (!hexColor) return 'black'; // default

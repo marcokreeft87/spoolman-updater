@@ -18,8 +18,4 @@ public class SpoolsController(IInputHandler handler) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] GetAllSpoolsInput input) =>
         Ok(await handler.HandleAsync(input));
-
-    [HttpGet("barcode")]
-    public async Task<IActionResult> GetByBarcode([FromQuery] string barcode) =>
-       Ok(await handler.HandleAsync(new GetByBarcodeInput(barcode)));
 }

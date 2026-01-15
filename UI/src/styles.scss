@@ -1,4 +1,71 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --accent-color: #9c27b0;
+  --accent-color-dark: #7b1fa2;
+  --accent-color-light: #ce93d8;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: #191c1c; }
+
+/* Override Angular Material primary color buttons */
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-flat-button.mat-primary {
+  --mdc-filled-button-container-color: var(--accent-color) !important;
+  --mdc-filled-button-label-text-color: white !important;
+  --mdc-protected-button-container-color: var(--accent-color) !important;
+  --mdc-protected-button-label-text-color: white !important;
+  background-color: var(--accent-color) !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover,
+.mat-mdc-unelevated-button.mat-primary:hover,
+.mat-mdc-flat-button.mat-primary:hover {
+  --mdc-filled-button-container-color: var(--accent-color-dark) !important;
+  --mdc-protected-button-container-color: var(--accent-color-dark) !important;
+  background-color: var(--accent-color-dark) !important;
+}
+
+/* Ensure button ripple also uses accent color */
+.mat-mdc-raised-button.mat-primary .mat-mdc-button-persistent-ripple::before {
+  background-color: var(--accent-color) !important;
+}
+
+/* Override Angular Material toolbar */
+.mat-toolbar {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+}
+
+/* Override mat-checkbox accent */
+.mat-mdc-checkbox.mat-accent {
+  --mdc-checkbox-selected-checkmark-color: white;
+  --mdc-checkbox-selected-focus-icon-color: var(--accent-color);
+  --mdc-checkbox-selected-hover-icon-color: var(--accent-color);
+  --mdc-checkbox-selected-icon-color: var(--accent-color);
+  --mdc-checkbox-selected-pressed-icon-color: var(--accent-color);
+}
+
+/* Override mat-autocomplete/mat-option highlight */
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+  --mat-option-selected-state-layer-color: var(--accent-color-light);
+}
+
+.mat-mdc-option:hover:not(.mdc-list-item--disabled) {
+  background-color: rgba(156, 39, 176, 0.1);
+}
+
+/* Dialog styling */
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #2d2d2d;
+}
+
+.mat-mdc-dialog-title {
+  color: white !important;
+}
+
+.mat-mdc-dialog-content {
+  color: rgba(255, 255, 255, 0.87) !important;
+}

@@ -4,6 +4,11 @@
   flex-direction: column;
   gap: 15px;
 
+  .spool-id {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
   .spool-color {
     height: 20px;
     padding: 8px;

@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,10 +7,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { map, Observable, startWith } from 'rxjs';
+import { map, Observable, startWith, Subject, takeUntil } from 'rxjs';
 import { Spool } from '../../models/spool';
 import { Tray } from '../../models/tray';
 import { SpoolsService } from '../../service/spoolman.service';
+import { SettingsService } from '../../service/settings.service';
 import { SpoolItemComponent } from "../spool/spool.component";
 
 @Component({
@@ -33,24 +34,46 @@ import { SpoolItemComponent } from "../spool/spool.component";
   templateUrl: './tray.component.html',
   styleUrls: ['./tray.component.scss'],
 })
-export class TrayComponent implements OnInit {
+export class TrayComponent implements OnInit, OnDestroy, OnChanges {
   @Input() tray: Tray | null = null;
   @Input() spools: Spool[] = [];
   @Input() name: string = '';
 
   currentSpool: Spool | undefined;
   filteredSpools: Observable<Spool[]> = new Observable<Spool[]>();
-   spoolControl = new FormControl('');
+  spoolControl = new FormControl('');
+  showSpoolIds = false;
 
-  constructor(private spoolService: SpoolsService) { }
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private spoolService: SpoolsService,
+    private settingsService: SettingsService
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['tray'] || changes['spools']) {
+      this.currentSpool = this.getCurrentSpool(this.tray);
+    }
+  }
 
   ngOnInit(): void {
-    this.currentSpool = this.getCurrentSpool(this.tray);
+    // Subscribe to settings changes
+    this.settingsService.settings$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(settings => {
+        this.showSpoolIds = settings.showSpoolIds;
+      });
 
     this.filteredSpools = this.spoolControl.valueChanges.pipe(
       startWith(''),
       map(value => this.filter(value || '')),
     );
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   filter(value: string | Spool): Spool[] {
@@ -59,10 +82,11 @@ export class TrayComponent implements OnInit {
     return this.spools.filter(option => this.displaySpoolName(option).toLowerCase().includes(filterValue));
   }
 
-  displaySpoolName(spool: Spool): string {
-    return spool
-      ? `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} - ${spool.remaining_weight}g`
-      : '';
+  displaySpoolName = (spool: Spool): string => {
+    if (!spool) return '';
+
+    const baseName = `${spool.filament.vendor.name} ${spool.filament.material} ${spool.filament.name} - ${spool.remaining_weight}g`;
+    return this.showSpoolIds ? `#${spool.id} ${baseName}` : baseName;
   }
 
   getCurrentSpool(tray: Tray | null): Spool {

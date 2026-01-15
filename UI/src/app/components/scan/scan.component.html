@@ -1,10 +1,27 @@
-<mat-card>
+<!-- Loading state -->
+<mat-card *ngIf="loading">
+  <mat-card-content class="ams">
+    <p>Loading spool data...</p>
+  </mat-card-content>
+</mat-card>
+
+<!-- Error state -->
+<mat-card *ngIf="error" class="error-card">
+  <mat-card-content class="ams">
+    <p class="error-message">{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/">Go Home</button>
+  </mat-card-content>
+</mat-card>
+
+<!-- Spool info -->
+<mat-card *ngIf="!loading && !error && spool">
   <mat-card-content class="ams">
     <app-spool-item [spool]="spool"></app-spool-item>
   </mat-card-content>
 </mat-card>
 
-<mat-card class="ams-card">
+<!-- Tray selection -->
+<mat-card class="ams-card" *ngIf="!loading && !error && spool">
   <mat-card-header>
     <mat-card-title>
       <h1>Select a tray</h1>
@@ -12,6 +29,8 @@
   </mat-card-header>
 
   <mat-card-content class="ams">
+    <p *ngIf="updating" class="updating-message">Updating tray...</p>
+
     <div class="ams-container">
       <ng-container *ngIf="amsEntities.length > 0; else noAmsMessage">
         @for (ams of amsEntities; track ams; let index = $index) {
@@ -27,6 +46,7 @@
               mat-raised-button
               color="primary"
               (click)="updateTray(tray)"
+              [disabled]="updating"
             >
               <span>Tray {{ trayIndex + 1 }}</span>
             </button>
@@ -41,13 +61,13 @@
         <p>No AMS found</p>
       </ng-template>
 
-      <ng-container *ngIf="amsEntities.length > 0; else noExternalSpoolMessage">
+      <ng-container *ngIf="externalSpoolEntity?.id">
         <mat-card class="ams-card">
           <mat-card-header>
             <mat-card-title>External Spool</mat-card-title>
           </mat-card-header>
           <mat-card-content class="ams-card-content">
-            <button mat-raised-button color="primary">
+            <button mat-raised-button color="primary" (click)="updateTray(externalSpoolEntity)" [disabled]="updating">
               <span>External Spool</span>
             </button>
           </mat-card-content>

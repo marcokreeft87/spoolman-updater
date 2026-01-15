@@ -4,6 +4,22 @@
   display: flex;
   flex-direction: column;
 
+  .error-card {
+    background-color: #5c2121;
+  }
+
+  .error-message {
+    color: #ff8a8a;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .updating-message {
+    color: #8ac4ff;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
   .ams-container {
     display: flex;
     gap: 16px;

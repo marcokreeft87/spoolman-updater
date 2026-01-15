@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>Settings</h2>
+
+<mat-dialog-content>
+  <div class="settings-section">
+    <h3>Accent Color</h3>
+    <p class="setting-description">Choose the accent color for buttons and highlights</p>
+
+    <div class="color-presets">
+      <button
+        *ngFor="let preset of colorPresets"
+        class="color-preset-btn"
+        [style.background-color]="preset.hex"
+        [class.selected]="isSelectedColor(preset.hex)"
+        [title]="preset.name"
+        (click)="selectPresetColor(preset.hex)"
+      >
+        <span class="checkmark" *ngIf="isSelectedColor(preset.hex)">&#10003;</span>
+      </button>
+    </div>
+
+    <div class="custom-color">
+      <label for="customColor">Custom color:</label>
+      <input
+        type="color"
+        id="customColor"
+        [value]="customColor"
+        (input)="onCustomColorChange($event)"
+      />
+      <span class="color-hex">{{ customColor }}</span>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Display Options</h3>
+
+    <mat-checkbox
+      [checked]="settings.showSpoolIds"
+      (change)="onShowSpoolIdsChange($event.checked)"
+    >
+      Show Spool IDs in dropdown
+    </mat-checkbox>
+    <p class="setting-description">
+      Display the Spoolman spool ID before the spool name to help identify spools
+      with identical colors and brands
+    </p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="resetToDefaults()">Reset to Defaults</button>
+  <button mat-raised-button color="primary" (click)="close()">Close</button>
+</mat-dialog-actions>
